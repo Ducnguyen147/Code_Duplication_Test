@@ -1,0 +1,134 @@
+{
+  "statistics": {
+    "detectionDate": "2025-05-03T08:39:09.270Z",
+    "formats": {
+      "python": {
+        "sources": {
+          "/home/duc/Desktop/code_duplication/Code_Duplication_Test/python/jscpd/type2/type2c.py": {
+            "lines": 5,
+            "tokens": 55,
+            "sources": 1,
+            "clones": 2,
+            "duplicatedLines": 2,
+            "duplicatedTokens": 14,
+            "percentage": 40,
+            "percentageTokens": 25.45,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "/home/duc/Desktop/code_duplication/Code_Duplication_Test/python/jscpd/type2/type2b.py": {
+            "lines": 5,
+            "tokens": 55,
+            "sources": 1,
+            "clones": 2,
+            "duplicatedLines": 2,
+            "duplicatedTokens": 14,
+            "percentage": 40,
+            "percentageTokens": 25.45,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          }
+        },
+        "total": {
+          "lines": 10,
+          "tokens": 110,
+          "sources": 2,
+          "clones": 2,
+          "duplicatedLines": 2,
+          "duplicatedTokens": 14,
+          "percentage": 20,
+          "percentageTokens": 12.73,
+          "newDuplicatedLines": 0,
+          "newClones": 0
+        }
+      }
+    },
+    "total": {
+      "lines": 10,
+      "tokens": 110,
+      "sources": 2,
+      "clones": 2,
+      "duplicatedLines": 2,
+      "duplicatedTokens": 14,
+      "percentage": 20,
+      "percentageTokens": 12.73,
+      "newDuplicatedLines": 0,
+      "newClones": 0
+    }
+  },
+  "duplicates": [
+    {
+      "format": "python",
+      "lines": 2,
+      "fragment": "= []\n    for value",
+      "tokens": 0,
+      "firstFile": {
+        "name": "jscpd/type2/type2b.py",
+        "start": 3,
+        "end": 4,
+        "startLoc": {
+          "line": 3,
+          "column": 2,
+          "position": 13
+        },
+        "endLoc": {
+          "line": 4,
+          "column": 6,
+          "position": 21
+        }
+      },
+      "secondFile": {
+        "name": "jscpd/type2/type2c.py",
+        "start": 3,
+        "end": 4,
+        "startLoc": {
+          "line": 3,
+          "column": 2,
+          "position": 13
+        },
+        "endLoc": {
+          "line": 4,
+          "column": 5,
+          "position": 21
+        }
+      }
+    },
+    {
+      "format": "python",
+      "lines": 2,
+      "fragment": "== 0:\n            output",
+      "tokens": 0,
+      "firstFile": {
+        "name": "jscpd/type2/type2b.py",
+        "start": 5,
+        "end": 6,
+        "startLoc": {
+          "line": 5,
+          "column": 2,
+          "position": 37
+        },
+        "endLoc": {
+          "line": 6,
+          "column": 7,
+          "position": 43
+        }
+      },
+      "secondFile": {
+        "name": "jscpd/type2/type2c.py",
+        "start": 5,
+        "end": 6,
+        "startLoc": {
+          "line": 5,
+          "column": 2,
+          "position": 37
+        },
+        "endLoc": {
+          "line": 6,
+          "column": 7,
+          "position": 43
+        }
+      }
+    }
+  ],
+  "filename": "/usr/lib/node_modules/jscpd/node_modules/@jscpd/html-reporter/dist/templates/main.pug"
+}

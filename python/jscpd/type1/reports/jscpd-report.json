@@ -1,0 +1,97 @@
+{
+  "statistics": {
+    "detectionDate": "2025-05-02T21:10:02.292Z",
+    "formats": {
+      "python": {
+        "sources": {
+          "/home/duc/Desktop/code_duplication/Code_Duplication_Test/python/jscpd/type1/type1b.py": {
+            "lines": 3,
+            "tokens": 33,
+            "sources": 1,
+            "clones": 1,
+            "duplicatedLines": 3,
+            "duplicatedTokens": 32,
+            "percentage": 100,
+            "percentageTokens": 96.97,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "/home/duc/Desktop/code_duplication/Code_Duplication_Test/python/jscpd/type1/type1a.py": {
+            "lines": 3,
+            "tokens": 35,
+            "sources": 1,
+            "clones": 1,
+            "duplicatedLines": 3,
+            "duplicatedTokens": 32,
+            "percentage": 100,
+            "percentageTokens": 91.43,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          }
+        },
+        "total": {
+          "lines": 6,
+          "tokens": 68,
+          "sources": 2,
+          "clones": 1,
+          "duplicatedLines": 3,
+          "duplicatedTokens": 32,
+          "percentage": 50,
+          "percentageTokens": 47.06,
+          "newDuplicatedLines": 0,
+          "newClones": 0
+        }
+      }
+    },
+    "total": {
+      "lines": 6,
+      "tokens": 68,
+      "sources": 2,
+      "clones": 1,
+      "duplicatedLines": 3,
+      "duplicatedTokens": 32,
+      "percentage": 50,
+      "percentageTokens": 47.06,
+      "newDuplicatedLines": 0,
+      "newClones": 0
+    }
+  },
+  "duplicates": [
+    {
+      "format": "python",
+      "lines": 4,
+      "fragment": "(numbers):\n    total = sum(numbers)\n    count = len(numbers)\n    return total / count",
+      "tokens": 0,
+      "firstFile": {
+        "name": "jscpd/type1/type1a.py",
+        "start": 2,
+        "end": 5,
+        "startLoc": {
+          "line": 2,
+          "column": 20,
+          "position": 5
+        },
+        "endLoc": {
+          "line": 5,
+          "column": 6,
+          "position": 37
+        }
+      },
+      "secondFile": {
+        "name": "jscpd/type1/type1b.py",
+        "start": 2,
+        "end": 5,
+        "startLoc": {
+          "line": 2,
+          "column": 21,
+          "position": 5
+        },
+        "endLoc": {
+          "line": 5,
+          "column": 6,
+          "position": 35
+        }
+      }
+    }
+  ]
+}

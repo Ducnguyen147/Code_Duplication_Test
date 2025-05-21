@@ -1,0 +1,97 @@
+{
+  "statistics": {
+    "detectionDate": "2025-05-03T09:01:20.717Z",
+    "formats": {
+      "python": {
+        "sources": {
+          "/home/duc/Desktop/code_duplication/Code_Duplication_Test/python/jscpd/control_flow/cf_a.py": {
+            "lines": 4,
+            "tokens": 29,
+            "sources": 1,
+            "clones": 1,
+            "duplicatedLines": 1,
+            "duplicatedTokens": 7,
+            "percentage": 25,
+            "percentageTokens": 24.14,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "/home/duc/Desktop/code_duplication/Code_Duplication_Test/python/jscpd/control_flow/cf_b.py": {
+            "lines": 4,
+            "tokens": 44,
+            "sources": 1,
+            "clones": 1,
+            "duplicatedLines": 1,
+            "duplicatedTokens": 7,
+            "percentage": 25,
+            "percentageTokens": 15.91,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          }
+        },
+        "total": {
+          "lines": 8,
+          "tokens": 73,
+          "sources": 2,
+          "clones": 1,
+          "duplicatedLines": 1,
+          "duplicatedTokens": 7,
+          "percentage": 12.5,
+          "percentageTokens": 9.59,
+          "newDuplicatedLines": 0,
+          "newClones": 0
+        }
+      }
+    },
+    "total": {
+      "lines": 8,
+      "tokens": 73,
+      "sources": 2,
+      "clones": 1,
+      "duplicatedLines": 1,
+      "duplicatedTokens": 7,
+      "percentage": 12.5,
+      "percentageTokens": 9.59,
+      "newDuplicatedLines": 0,
+      "newClones": 0
+    }
+  },
+  "duplicates": [
+    {
+      "format": "python",
+      "lines": 2,
+      "fragment": ":\n        return float(text",
+      "tokens": 0,
+      "firstFile": {
+        "name": "jscpd/control_flow/cf_b.py",
+        "start": 3,
+        "end": 4,
+        "startLoc": {
+          "line": 3,
+          "column": 2,
+          "position": 29
+        },
+        "endLoc": {
+          "line": 4,
+          "column": 5,
+          "position": 36
+        }
+      },
+      "secondFile": {
+        "name": "jscpd/control_flow/cf_a.py",
+        "start": 3,
+        "end": 4,
+        "startLoc": {
+          "line": 3,
+          "column": 4,
+          "position": 12
+        },
+        "endLoc": {
+          "line": 4,
+          "column": 10,
+          "position": 19
+        }
+      }
+    }
+  ]
+}
