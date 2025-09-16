@@ -7,10 +7,13 @@ from sentence_transformers import SentenceTransformer, util
 EMBED_MODELS = {
     "mchochlov/codebert-base-cd-ft", # Paper: Using a Nearest-Neighbour, BERT-Based Approach for Scalable Clone Detection
     "jiekeshi/CodeBERT-50MB-Clone-Detection", # Paper: Compressing Pre-trained Models of Code into 3 MB
-    "jiekeshi/GraphCodeBERT-3MB-Clone-Detection" # Paper: Compressing Pre-trained Models of Code into 3 MB
+    "jiekeshi/GraphCodeBERT-3MB-Clone-Detection", # Paper: Compressing Pre-trained Models of Code into 3 MB
+    "microsoft/graphcodebert-base",
+    "4luc/codebert-code-clone-detector",
+    "Lazyhope/python-clone-detection"
 }
 CLASSIFIER_MODELS = {
-    "4luc/codebert-code-clone-detector",
+    #"4luc/codebert-code-clone-detector",
     "jiekeshi/GraphCodeBERT-Adversarial-Finetuned-Clone-Detection"
 }
 BASE_TOKENIZER = {  # map → their pre-training base
@@ -30,7 +33,7 @@ def classifier_score(code1, code2, tok, mdl) -> float:
     toks   = tok(code1, code2, truncation=True, padding=True,
                  return_tensors="pt").to(mdl.device)
     logits = mdl(**toks).logits.squeeze(0)
-    if logits.numel() == 1
+    if logits.numel() == 1:
         prob = torch.sigmoid(logits).item()
     else:
         prob = torch.softmax(logits, dim=-1)[1].item()
@@ -46,7 +49,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--file1", required=True)
     ap.add_argument("--file2", required=True)
-    ap.add_argument("--model", default="4luc/codebert-code-clone-detector")
+    ap.add_argument("--model", default="mchochlov/codebert-base-cd-ft")
     ap.add_argument("--threshold", type=float, default=0.9,
                     help="probability (classifier) or cosine (embed) cut-off")
     args = ap.parse_args()
