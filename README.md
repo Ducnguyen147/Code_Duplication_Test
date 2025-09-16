@@ -138,3 +138,7 @@ python3 semantic_clone_detector.py --file1 path1 --file2 path2 --threshold 0.7
 ```bash
 python3 semantic_clone_binary.py --file1 path1 --file2 path2 --threshold 0.7
 ```
+
+```bash
+python detect_clones_cli.py --dir /home/duc/Desktop/code_duplication/Code_Duplication_Test/python/dolos/non_similar --extensions .py .java --model mchochlov/codebert-base-cd-ft --threshold 0.85
+```
