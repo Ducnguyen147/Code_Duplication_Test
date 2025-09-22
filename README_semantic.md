@@ -1,79 +1,125 @@
-## Shebang line
-Purpose: Directs Unix-like systems to use the python3 interpreter found in the user’s PATH rather than a hard-coded location. This ensures portability across environments where Python may be installed in different paths
-Stack Overflow
-and selects whichever python3 appears first in $PATH
+0) What the script does (in one minute)
 
-## Imports and Model Constants
-argparse: Builds the CLI and parses flags/arguments from the user
-Python documentation.
+Semantic channel (embeddings): encodes each file with a Sentence‑Transformers model (default: CodeBERT cd‑ft). Cosine between L2‑normalized vectors ≈ semantic similarity.
 
-os, sys: Handle file checks and process exit—standard Python modules.
+Structural channels (optional):
 
-torch: PyTorch core library for tensor operations and device management.
+AST bag‑of‑features with Tree‑sitter (node types, parent→child edges, depth buckets), with TF‑IDF + optional centering to reduce generic syntax effects.
 
-torch.nn.functional (F): Provides lower-level neural network operations, including normalize for vector normalization
-PyTorch.
+Lexical vector made from token n‑grams (default Python tokens with identifier anonymization) or raw character n‑grams.
 
-transformers.AutoTokenizer: Automatically loads the appropriate tokenizer for a given pre-trained model ID
-Hugging Face.
+Local fingerprints (optional but powerful on small code): token k‑grams with optional winnowing (MOSS) to select stable anchors; the script computes Jaccard‑like similarity, total overlap, and longest matching run to gate pairs before final scoring—these are the same coverage‑style metrics popularized by MOSS and used in Dolos. 
+Semantic Scholar
 
-transformers.AutoModelForSequenceClassification: Loads a model with a sequence classification head (linear layer on [CLS]) for tasks like binary or multiclass classification
-Hugging Face .
+1) The score you see
 
-sentence_transformers.SentenceTransformer: Loads embedding models optimized for producing fixed-size sentence or code embeddings
-SentenceTransformers.
+When --fusion late, a pair (i, j) passes through:
 
-sentence_transformers.util.cos_sim: Computes the cosine similarity between two embeddings
+FAISS prefilter on the embedding space: keep only neighbors with embed‑cosine ≥ --prefilter-threshold.
 
-Model lists: Distinguish between models that output embeddings for cosine similarity and models with classification heads.
+Structural gate(s): require ast_cos ≥ --min-ast-sim and/or lex_cos ≥ --min-lex-sim. (If both AST and Lex are off, gate is bypassed.)
 
-Tokenizer mapping: Some classifier models share tokenizers with their base pre-training checkpoints.
+Fingerprint gate (if enabled): require
+fp_sim ≥ --min-fp-sim and fp_total ≥ --min-fp-total and fp_longest ≥ --min-fp-longest.
+(Pairs with embed_cos ≥ --embed-superpass bypass the fp gate—useful for deep Type‑4 similarities.)
 
-## Loading a Classifier
-Select tokenizer: Uses BASE_TOKENIZER mapping to load the correct tokenizer for a given classification checkpoint
-Hugging Face.
+Final score
+s = (w_embed·embed_cos + w_ast·max(ast_cos,0) + w_lex·max(lex_cos,0)) / (w_embed + w_ast + w_lex)
+unless --allow-negative-structure is set, structural cosines are clipped at 0 (they can only help, not hurt).
 
-Load model: AutoModelForSequenceClassification.from_pretrained fetches weights and architecture for sequence classification and moves it to device (CPU/GPU)
-Hugging Face.
+2) Arguments, grouped and explained
+A) Inputs & model
 
-.eval(): Sets the model to evaluation mode (disables dropout, etc.).
+--dir PATH
+Root folder to scan (recursively).
 
-## Classifier-Based Scoring
-@torch.inference_mode(): Context manager that disables autograd and optimizes inference speed and memory by skipping gradient tracking
-PyTorch
-.
+--extensions .py .java ...
+Filters files by suffix. If omitted, all files under --dir are read.
 
-Tokenization: Encodes two code strings as a pair, applies truncation and padding, and returns PyTorch tensors on the model’s device.
+--model NAME (default: mchochlov/codebert-base-cd-ft)
+Sentence‑Transformers model for embeddings.
 
-Logits extraction: The model’s forward call yields .logits.
+--batch-size INT (default: 16)
+Embedding batch size; raise if you have GPU memory.
 
-Single vs. multi-logit head:
-    - If num_labels=1, the model returns a single logit for binary classification; apply sigmoid to get a probability
-    PyTorch.
+B) Fusion & thresholds
 
-    - If num_labels=2, returns two logits; apply softmax and take the positive‐class index ([1]) as probability
-    PyTorch.
+--fusion {late, concat} (default: late)
+late = prefilter on embeddings, then re‑score with structure and fp gates.
+concat = build one big vector and search once (fast, less controllable).
 
-## Embedding-based scoring
-Embedding: model.encode(...) converts code text into a fixed-dimensional embedding tensor
-SentenceTransformers.
+--prefilter-threshold FLOAT (default: 0.75)
+Embedding cosine cut for the FAISS prefilter (before gates).
+Lower this for tiny datasets so near‑misses aren’t thrown away too early.
 
-Normalization: F.normalize(..., p=2) scales embeddings to unit length under L₂ norm, a common step before cosine similarity
-PyTorch.
+--threshold FLOAT (default: 0.85)
+Final fused‑score cut; pairs below are not reported.
 
-Cosine similarity: util.cos_sim computes the dot product between normalized vectors, yielding a similarity score in [-1,1] 
+C) Channel weights
 
-## Main Execution Flow
-Argument parsing: Defines required file paths, model choice, and similarity threshold.
+--w-embed FLOAT (default: 1.0)
+Weight of the semantic channel.
 
-File validation: Exits if either file is unreadable.
+--w-ast FLOAT (default: 0.6)
+Weight of AST structural channel (if active).
 
-File reading: Loads the source code text.
+--w-lex FLOAT (default: 0.1)
+Weight of lexical vector channel (if active).
+Rule of thumb: start high on embeddings; add 0.2–0.6 AST for Type‑1/2/3 robustness; keep lex small (0.05–0.2) to avoid over‑rewarding boilerplate.
 
-Device selection: Uses GPU if CUDA is available, otherwise CPU.
+D) AST options (Tree‑sitter)
 
-Model dispatch: Chooses classifier or embed path based on the selected model ID.
+--no-ast
+Disable AST channel completely.
 
-Scoring: Runs the appropriate scoring function and labels the result ("probability" or "cosine").
+--ast-dim INT (default: 2048)
+Hash space for AST features; 2–8k are typical.
 
-Threshold comparison: Prints a human-readable verdict, marking files as clones if the score meets or exceeds the threshold.
+--ast-tfidf / --ast-no-tfidf (default: TF‑IDF ON)
+Apply TF‑IDF to down‑weight ubiquitous syntax tokens.
+
+--ast-stop-topk INT (default: 0)
+Drop the k most frequent AST dims (by total count) before TF‑IDF.
+Helpful on large sets (e.g., 32–64) to remove ultra‑common scaffolding.
+
+--ast-center / --ast-no-center (default: OFF)
+Mean‑center AST vectors after TF‑IDF; good on large N, but can be noisy on very small corpora.
+
+E) Lexical vector options
+
+--no-lex
+Disable lexical vector channel.
+
+--lex-mode {py-token, char} (default: py-token)
+py-token = Python tokenizer with identifier anonymization (NAME → ID, NUMBER → NUM) and punctuation/keywords kept—similar to classic token‑based plagiarism detectors. 
+arXiv
+
+char = raw character n‑grams (language‑agnostic, more boilerplate‑prone).
+
+--lex-n INT (default: 3)
+N‑gram length (token or character). For tokens, 3–5 works well.
+
+--lex-dim INT (default: 4096)
+Hash space for lexical features.
+
+F) Fingerprint (MOSS/Dolos‑style) gate
+
+--no-fp
+Disable fingerprint gating entirely (not recommended for tiny files).
+
+--fp-k INT (default: 5)
+Token k‑gram size used to form fingerprints. For short functions, use smaller values (3–4) to avoid “zero fingerprints”.
+
+--fp-w INT (default: 4)
+Winnowing window; 0 keeps all k‑grams. Standard winnowing picks the minimum hash per sliding window to create a stable, position‑aware subset (MOSS).
+
+--min-fp-sim FLOAT (default: 0.12)
+Minimum Jaccard‑like similarity of fingerprint multisets.
+
+--min-fp-total INT (default: 4)
+Minimum count of intersecting fingerprints (coverage).
+
+--min-fp-longest INT (default: 2)
+Minimum length of the longest common contiguous run of fingerprints (robust “long match” evidence).
+
+These three gates mirror the similarity / total overlap / longest fragment metrics used by Dolos to balance recall and precision on short programs.

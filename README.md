@@ -142,3 +142,24 @@ python3 semantic_clone_binary.py --file1 path1 --file2 path2 --threshold 0.7
 ```bash
 python detect_clones_cli.py --dir /home/duc/Desktop/code_duplication/Code_Duplication_Test/python/dolos/non_similar --extensions .py .java --model mchochlov/codebert-base-cd-ft --threshold 0.85
 ```
+
+```bash
+python detect_clone_cli_v3.py --dir /home/duc/Desktop/code_duplication/Code_Duplication_Test/python/dolos/non_similar --extensions .py .java --fusion concat --w-embed 1.0 --w-ast 0.6 --w-lex 0.2 --threshold 0.2
+```
+
+```bash
+python detect_clone_cli_v3.py --dir /home/duc/Desktop/code_duplication/Code_Duplication_Test/python/dolos/type1 --extensions .py .java --fusion late --prefilter-threshold 0.75 --w-embed 1.0 --w-ast 0.7 --w-lex 0.2 --threshold 0.2
+```
+<!-- # 1) Clean out conflicting bits
+pip uninstall -y tree_sitter_languages tree-sitter-language-pack tree-sitter
+
+# 2) Install a modern, compatible stack
+pip install "tree-sitter>=0.25,<0.26" "tree-sitter-language-pack>=0.7"
+# (py-tree-sitter 0.25.x docs show Parser(language, ...))  ← verified. :contentReference[oaicite:3]{index=3} -->
+
+```bash
+python detect_clone_cli_v4.py   --dir /home/duc/Desktop/code_duplication/Code_Duplication_Test/python/dolos/type4   --extensions .py   --fusion
+ late   --prefilter-threshold 0.80   --threshold 0.20   --w-embed 1.0 --w-ast 0.35 --embed-superpass 0.7  --w-lex 0
+.1   --no-center --ast-no-center --ast-tfidf --lex-mode py-token --lex-n 3 --fp-k 5 --fp-w 4 --min-fp-sim 0.05 --mi
+n-fp-total 2 --min-fp-longest 1 --min-ast-sim 0.00 --min-lex-sim 0.00  --debug-components --topk 20
+``````

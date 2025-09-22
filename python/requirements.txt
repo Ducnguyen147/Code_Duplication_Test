@@ -4,3 +4,6 @@ pandas
 tqdm
 scikit-learn
 sentence-transformers
+faiss-cpu
+tree_sitter
+tree_sitter_languages
