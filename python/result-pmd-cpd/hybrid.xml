@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pmd-cpd xmlns="https://pmd-code.org/schema/cpd-report"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         pmdVersion="7.13.0"
+         timestamp="2025-10-06T23:05:38.664219254+02:00"
+         version="1.0.0"
+         xsi:schemaLocation="https://pmd-code.org/schema/cpd-report https://pmd.github.io/schema/cpd-report_1_0_0.xsd">
+   <file path="/home/duc/Desktop/code_duplication/Code_Duplication_Test/python/hybrid/data_processor.py"
+         totalNumberOfTokens="77"/>
+   <file path="/home/duc/Desktop/code_duplication/Code_Duplication_Test/python/hybrid/info_handler.py"
+         totalNumberOfTokens="98"/>
+   <duplication lines="1" tokens="5">
+      <file begintoken="4"
+            column="5"
+            endcolumn="23"
+            endline="3"
+            endtoken="8"
+            line="3"
+            path="/home/duc/Desktop/code_duplication/Code_Duplication_Test/python/hybrid/data_processor.py"/>
+      <file begintoken="82"
+            column="5"
+            endcolumn="23"
+            endline="3"
+            endtoken="86"
+            line="3"
+            path="/home/duc/Desktop/code_duplication/Code_Duplication_Test/python/hybrid/info_handler.py"/>
+      <codefragment><![CDATA[    def __init__(self, data):
+]]></codefragment>
+   </duplication>
+   <duplication lines="1" tokens="5">
+      <file begintoken="28"
+            column="24"
+            endcolumn="37"
+            endline="8"
+            endtoken="32"
+            line="8"
+            path="/home/duc/Desktop/code_duplication/Code_Duplication_Test/python/hybrid/data_processor.py"/>
+      <file begintoken="35"
+            column="43"
+            endcolumn="56"
+            endline="8"
+            endtoken="39"
+            line="8"
+            path="/home/duc/Desktop/code_duplication/Code_Duplication_Test/python/hybrid/data_processor.py"/>
+      <file begintoken="50"
+            column="23"
+            endcolumn="36"
+            endline="9"
+            endtoken="54"
+            line="9"
+            path="/home/duc/Desktop/code_duplication/Code_Duplication_Test/python/hybrid/data_processor.py"/>
+      <file begintoken="65"
+            column="23"
+            endcolumn="36"
+            endline="10"
+            endtoken="69"
+            line="10"
+            path="/home/duc/Desktop/code_duplication/Code_Duplication_Test/python/hybrid/data_processor.py"/>
+      <codefragment><![CDATA[            'mean': sum(self.values) / len(self.values) if self.values else 0,
+]]></codefragment>
+   </duplication>
+   <duplication lines="2" tokens="4">
+      <file begintoken="10"
+            column="28"
+            endcolumn="14"
+            endline="4"
+            endtoken="13"
+            line="3"
+            path="/home/duc/Desktop/code_duplication/Code_Duplication_Test/python/hybrid/data_processor.py"/>
+      <file begintoken="88"
+            column="31"
+            endcolumn="14"
+            endline="4"
+            endtoken="91"
+            line="3"
+            path="/home/duc/Desktop/code_duplication/Code_Duplication_Test/python/hybrid/info_handler.py"/>
+      <codefragment><![CDATA[    def __init__(self, data):
+        self.values = data
+]]></codefragment>
+   </duplication>
+   <duplication lines="1" tokens="4">
+      <file begintoken="19"
+            column="16"
+            endcolumn="23"
+            endline="6"
+            endtoken="22"
+            line="6"
+            path="/home/duc/Desktop/code_duplication/Code_Duplication_Test/python/hybrid/data_processor.py"/>
+      <file begintoken="97"
+            column="22"
+            endcolumn="29"
+            endline="6"
+            endtoken="100"
+            line="6"
+            path="/home/duc/Desktop/code_duplication/Code_Duplication_Test/python/hybrid/info_handler.py"/>
+      <codefragment><![CDATA[    def analyze(self):
+]]></codefragment>
+   </duplication>
+   <duplication lines="1" tokens="3">
+      <file begintoken="12"
+            column="9"
+            endcolumn="20"
+            endline="4"
+            endtoken="14"
+            line="4"
+            path="/home/duc/Desktop/code_duplication/Code_Duplication_Test/python/hybrid/data_processor.py"/>
+      <file begintoken="29"
+            column="25"
+            endcolumn="36"
+            endline="8"
+            endtoken="31"
+            line="8"
+            path="/home/duc/Desktop/code_duplication/Code_Duplication_Test/python/hybrid/data_processor.py"/>
+      <file begintoken="36"
+            column="44"
+            endcolumn="55"
+            endline="8"
+            endtoken="38"
+            line="8"
+            path="/home/duc/Desktop/code_duplication/Code_Duplication_Test/python/hybrid/data_processor.py"/>
+      <file begintoken="41"
+            column="60"
+            endcolumn="71"
+            endline="8"
+            endtoken="43"
+            line="8"
+            path="/home/duc/Desktop/code_duplication/Code_Duplication_Test/python/hybrid/data_processor.py"/>
+      <file begintoken="51"
+            column="24"
+            endcolumn="35"
+            endline="9"
+            endtoken="53"
+            line="9"
+            path="/home/duc/Desktop/code_duplication/Code_Duplication_Test/python/hybrid/data_processor.py"/>
+      <file begintoken="56"
+            column="40"
+            endcolumn="51"
+            endline="9"
+            endtoken="58"
+            line="9"
+            path="/home/duc/Desktop/code_duplication/Code_Duplication_Test/python/hybrid/data_processor.py"/>
+      <file begintoken="66"
+            column="24"
+            endcolumn="35"
+            endline="10"
+            endtoken="68"
+            line="10"
+            path="/home/duc/Desktop/code_duplication/Code_Duplication_Test/python/hybrid/data_processor.py"/>
+      <file begintoken="71"
+            column="40"
+            endcolumn="51"
+            endline="10"
+            endtoken="73"
+            line="10"
+            path="/home/duc/Desktop/code_duplication/Code_Duplication_Test/python/hybrid/data_processor.py"/>
+      <codefragment><![CDATA[        self.values = data
+]]></codefragment>
+   </duplication>
+   <duplication lines="1" tokens="3">
+      <file begintoken="44"
+            column="72"
+            endcolumn="79"
+            endline="8"
+            endtoken="46"
+            line="8"
+            path="/home/duc/Desktop/code_duplication/Code_Duplication_Test/python/hybrid/data_processor.py"/>
+      <file begintoken="157"
+            column="43"
+            endcolumn="50"
+            endline="21"
+            endtoken="159"
+            line="21"
+            path="/home/duc/Desktop/code_duplication/Code_Duplication_Test/python/hybrid/info_handler.py"/>
+      <codefragment><![CDATA[            'mean': sum(self.values) / len(self.values) if self.values else 0,
+]]></codefragment>
+   </duplication>
+   <duplication lines="1" tokens="3">
+      <file begintoken="59"
+            column="52"
+            endcolumn="62"
+            endline="9"
+            endtoken="61"
+            line="9"
+            path="/home/duc/Desktop/code_duplication/Code_Duplication_Test/python/hybrid/data_processor.py"/>
+      <file begintoken="165"
+            column="43"
+            endcolumn="53"
+            endline="22"
+            endtoken="167"
+            line="22"
+            path="/home/duc/Desktop/code_duplication/Code_Duplication_Test/python/hybrid/info_handler.py"/>
+      <codefragment><![CDATA[            'max': max(self.values) if self.values else None,
+]]></codefragment>
+   </duplication>
+   <duplication lines="2" tokens="3">
+      <file begintoken="74"
+            column="52"
+            endcolumn="10"
+            endline="11"
+            endtoken="76"
+            line="10"
+            path="/home/duc/Desktop/code_duplication/Code_Duplication_Test/python/hybrid/data_processor.py"/>
+      <file begintoken="173"
+            column="43"
+            endcolumn="10"
+            endline="24"
+            endtoken="175"
+            line="23"
+            path="/home/duc/Desktop/code_duplication/Code_Duplication_Test/python/hybrid/info_handler.py"/>
+      <codefragment><![CDATA[            'min': min(self.values) if self.values else None
+        }
+]]></codefragment>
+   </duplication>
+   <duplication lines="1" tokens="3">
+      <file begintoken="90"
+            column="9"
+            endcolumn="21"
+            endline="4"
+            endtoken="92"
+            line="4"
+            path="/home/duc/Desktop/code_duplication/Code_Duplication_Test/python/hybrid/info_handler.py"/>
+      <file begintoken="122"
+            column="18"
+            endcolumn="30"
+            endline="12"
+            endtoken="124"
+            line="12"
+            path="/home/duc/Desktop/code_duplication/Code_Duplication_Test/python/hybrid/info_handler.py"/>
+      <codefragment><![CDATA[        self.dataset = numbers  # Type II: renamed attribute
+]]></codefragment>
+   </duplication>
+   <duplication lines="1" tokens="3">
+      <file begintoken="108"
+            column="21"
+            endcolumn="29"
+            endline="9"
+            endtoken="110"
+            line="9"
+            path="/home/duc/Desktop/code_duplication/Code_Duplication_Test/python/hybrid/info_handler.py"/>
+      <file begintoken="114"
+            column="21"
+            endcolumn="29"
+            endline="10"
+            endtoken="116"
+            line="10"
+            path="/home/duc/Desktop/code_duplication/Code_Duplication_Test/python/hybrid/info_handler.py"/>
+      <codefragment><![CDATA[        current_max = float('-inf')
+]]></codefragment>
+   </duplication>
+   <duplication lines="1" tokens="3">
+      <file begintoken="155"
+            column="36"
+            endcolumn="47"
+            endline="21"
+            endtoken="157"
+            line="21"
+            path="/home/duc/Desktop/code_duplication/Code_Duplication_Test/python/hybrid/info_handler.py"/>
+      <file begintoken="163"
+            column="36"
+            endcolumn="47"
+            endline="22"
+            endtoken="165"
+            line="22"
+            path="/home/duc/Desktop/code_duplication/Code_Duplication_Test/python/hybrid/info_handler.py"/>
+      <file begintoken="171"
+            column="36"
+            endcolumn="47"
+            endline="23"
+            endtoken="173"
+            line="23"
+            path="/home/duc/Desktop/code_duplication/Code_Duplication_Test/python/hybrid/info_handler.py"/>
+      <codefragment><![CDATA[            'average': total / cnt if cnt else 0,
+]]></codefragment>
+   </duplication>
+</pmd-cpd>

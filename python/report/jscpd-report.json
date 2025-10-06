@@ -1,0 +1,181 @@
+{
+  "statistics": {
+    "detectionDate": "2025-10-06T22:02:26.373Z",
+    "formats": {
+      "python": {
+        "sources": {
+          "/home/duc/Desktop/code_duplication/Code_Duplication_Test/python/negatives/reverse_string.py": {
+            "lines": 4,
+            "tokens": 39,
+            "sources": 1,
+            "clones": 2,
+            "duplicatedLines": 2,
+            "duplicatedTokens": 14,
+            "percentage": 50,
+            "percentageTokens": 35.9,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "/home/duc/Desktop/code_duplication/Code_Duplication_Test/python/negatives/median.py": {
+            "lines": 6,
+            "tokens": 76,
+            "sources": 1,
+            "clones": 4,
+            "duplicatedLines": 4,
+            "duplicatedTokens": 20,
+            "percentage": 66.67,
+            "percentageTokens": 26.32,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "/home/duc/Desktop/code_duplication/Code_Duplication_Test/python/negatives/gcd.py": {
+            "lines": 3,
+            "tokens": 37,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          }
+        },
+        "total": {
+          "lines": 13,
+          "tokens": 152,
+          "sources": 3,
+          "clones": 3,
+          "duplicatedLines": 3,
+          "duplicatedTokens": 17,
+          "percentage": 23.08,
+          "percentageTokens": 11.18,
+          "newDuplicatedLines": 0,
+          "newClones": 0
+        }
+      }
+    },
+    "total": {
+      "lines": 13,
+      "tokens": 152,
+      "sources": 3,
+      "clones": 3,
+      "duplicatedLines": 3,
+      "duplicatedTokens": 17,
+      "percentage": 23.08,
+      "percentageTokens": 11.18,
+      "newDuplicatedLines": 0,
+      "newClones": 0
+    }
+  },
+  "duplicates": [
+    {
+      "format": "python",
+      "lines": 2,
+      "fragment": ":\n        loop_reversed = char",
+      "tokens": 0,
+      "firstFile": {
+        "name": "negatives/reverse_string.py",
+        "start": 3,
+        "end": 4,
+        "startLoc": {
+          "line": 3,
+          "column": 2,
+          "position": 23
+        },
+        "endLoc": {
+          "line": 4,
+          "column": 5,
+          "position": 30
+        }
+      },
+      "secondFile": {
+        "name": "negatives/reverse_string.py",
+        "start": 1,
+        "end": 2,
+        "startLoc": {
+          "line": 1,
+          "column": 2,
+          "position": 6
+        },
+        "endLoc": {
+          "line": 2,
+          "column": 3,
+          "position": 13
+        }
+      }
+    },
+    {
+      "format": "python",
+      "lines": 2,
+      "fragment": "(xs)\n    n",
+      "tokens": 0,
+      "firstFile": {
+        "name": "negatives/median.py",
+        "start": 2,
+        "end": 3,
+        "startLoc": {
+          "line": 2,
+          "column": 7,
+          "position": 14
+        },
+        "endLoc": {
+          "line": 3,
+          "column": 2,
+          "position": 19
+        }
+      },
+      "secondFile": {
+        "name": "negatives/median.py",
+        "start": 1,
+        "end": 1,
+        "startLoc": {
+          "line": 1,
+          "column": 7,
+          "position": 3
+        },
+        "endLoc": {
+          "line": 1,
+          "column": 2,
+          "position": 6
+        }
+      }
+    },
+    {
+      "format": "python",
+      "lines": 2,
+      "fragment": "(xs)\n    mid",
+      "tokens": 0,
+      "firstFile": {
+        "name": "negatives/median.py",
+        "start": 3,
+        "end": 4,
+        "startLoc": {
+          "line": 3,
+          "column": 4,
+          "position": 24
+        },
+        "endLoc": {
+          "line": 4,
+          "column": 4,
+          "position": 29
+        }
+      },
+      "secondFile": {
+        "name": "negatives/median.py",
+        "start": 1,
+        "end": 1,
+        "startLoc": {
+          "line": 1,
+          "column": 7,
+          "position": 3
+        },
+        "endLoc": {
+          "line": 1,
+          "column": 2,
+          "position": 6
+        }
+      }
+    }
+  ]
+}

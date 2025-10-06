@@ -1,15 +1,20 @@
+
 ## Dolos
+Link: https://dolos.ugent.be/docs/running.html
 ```bash
 curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
 sudo apt-get install -y nodejs
 sudo npm install -g @dodona/dolos
 zip -r duplication1.zip duplication1
 dolos run -f web -l python duplication1.zip
+dolos run -f csv -l python duplication1.zip # Parse to csv
 dolos run -l python duplication1.zip
 
 ```
 
 ## JPlag
+JPlag: use -t 9 as a robust default for typical coursework; the original JPlag evaluation found 7–11 to be the most reliable range and set the default to 9. For your small artificial snippets, go lower (-t 5–7) to avoid missing short matches (but expect more false positives).
+
 1. Download java version 21
 2. Download JPlag `jplag-6.0.0-jar-with-dependencies.jar` from `https://github.com/jplag/jplag/releases`
 3. Commands
@@ -39,6 +44,8 @@ java -jar jplag-6.0.0-jar-with-dependencies.jar -l python3 -t 5-r jplag/hybrid/r
 ```
 
 ## PMD-CPD
+PMD‑CPD: there’s no built‑in default in the CLI (you must supply a value), but common guidance and examples use ~100 tokens for normal projects (and the Maven plugin’s default is 100). For your short snippets, start at 10–30 tokens per language subset (Python near 10–20, Java/C++ 20–30), then sweep.
+
 1. sudo apt install -y unzip
 2. wget https://github.com/pmd/pmd/releases/download/pmd_releases%2F7.13.0/pmd-dist-7.13.0-bin.zip
 3. unzip pmd-dist-7.13.0-bin.zip
@@ -84,6 +91,8 @@ pmd cpd   --minimum-tokens 5 --dir /home/duc/Desktop/code_duplication/Code_Dupli
 ```
 
 ## JSCPD
+jscpd: default is --min-tokens 50 and --min-lines 5; that’s good for real‑world repos, but too high for shortcode snippets. Start at --min-tokens 10–20 and --min-lines 1–2, then sweep.
+
 1. sudo npm install -g jscpd
 2. jscpd --version
 3.

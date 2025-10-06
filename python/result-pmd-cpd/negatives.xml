@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pmd-cpd xmlns="https://pmd-code.org/schema/cpd-report"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         pmdVersion="7.13.0"
+         timestamp="2025-10-06T23:35:09.435124171+02:00"
+         version="1.0.0"
+         xsi:schemaLocation="https://pmd-code.org/schema/cpd-report https://pmd.github.io/schema/cpd-report_1_0_0.xsd">
+   <file path="/home/duc/Desktop/code_duplication/Code_Duplication_Test/python/negatives/gcd.py"
+         totalNumberOfTokens="22"/>
+   <file path="/home/duc/Desktop/code_duplication/Code_Duplication_Test/python/negatives/median.py"
+         totalNumberOfTokens="51"/>
+   <file path="/home/duc/Desktop/code_duplication/Code_Duplication_Test/python/negatives/reverse_string.py"
+         totalNumberOfTokens="21"/>
+   <duplication lines="1" tokens="4">
+      <file begintoken="54"
+            column="16"
+            endcolumn="23"
+            endline="6"
+            endtoken="57"
+            line="6"
+            path="/home/duc/Desktop/code_duplication/Code_Duplication_Test/python/negatives/median.py"/>
+      <file begintoken="67"
+            column="23"
+            endcolumn="30"
+            endline="7"
+            endtoken="70"
+            line="7"
+            path="/home/duc/Desktop/code_duplication/Code_Duplication_Test/python/negatives/median.py"/>
+      <codefragment><![CDATA[        return xs[mid]
+]]></codefragment>
+   </duplication>
+   <duplication lines="1" tokens="3">
+      <file begintoken="3"
+            column="9"
+            endcolumn="13"
+            endline="1"
+            endtoken="5"
+            line="1"
+            path="/home/duc/Desktop/code_duplication/Code_Duplication_Test/python/negatives/gcd.py"/>
+      <file begintoken="11"
+            column="9"
+            endcolumn="13"
+            endline="3"
+            endtoken="13"
+            line="3"
+            path="/home/duc/Desktop/code_duplication/Code_Duplication_Test/python/negatives/gcd.py"/>
+      <codefragment><![CDATA[def gcd(a, b):
+]]></codefragment>
+   </duplication>
+   <duplication lines="1" tokens="3">
+      <file begintoken="25"
+            column="11"
+            endcolumn="15"
+            endline="1"
+            endtoken="27"
+            line="1"
+            path="/home/duc/Desktop/code_duplication/Code_Duplication_Test/python/negatives/median.py"/>
+      <file begintoken="32"
+            column="16"
+            endcolumn="20"
+            endline="2"
+            endtoken="34"
+            line="2"
+            path="/home/duc/Desktop/code_duplication/Code_Duplication_Test/python/negatives/median.py"/>
+      <file begintoken="38"
+            column="12"
+            endcolumn="16"
+            endline="3"
+            endtoken="40"
+            line="3"
+            path="/home/duc/Desktop/code_duplication/Code_Duplication_Test/python/negatives/median.py"/>
+      <codefragment><![CDATA[def median(xs):
+]]></codefragment>
+   </duplication>
+   <duplication lines="1" tokens="3">
+      <file begintoken="54"
+            column="16"
+            endcolumn="22"
+            endline="6"
+            endtoken="56"
+            line="6"
+            path="/home/duc/Desktop/code_duplication/Code_Duplication_Test/python/negatives/median.py"/>
+      <file begintoken="60"
+            column="13"
+            endcolumn="19"
+            endline="7"
+            endtoken="62"
+            line="7"
+            path="/home/duc/Desktop/code_duplication/Code_Duplication_Test/python/negatives/median.py"/>
+      <file begintoken="67"
+            column="23"
+            endcolumn="29"
+            endline="7"
+            endtoken="69"
+            line="7"
+            path="/home/duc/Desktop/code_duplication/Code_Duplication_Test/python/negatives/median.py"/>
+      <codefragment><![CDATA[        return xs[mid]
+]]></codefragment>
+   </duplication>
+   <duplication lines="2" tokens="3">
+      <file begintoken="80"
+            column="22"
+            endcolumn="20"
+            endline="2"
+            endtoken="82"
+            line="1"
+            path="/home/duc/Desktop/code_duplication/Code_Duplication_Test/python/negatives/reverse_string.py"/>
+      <file begintoken="88"
+            column="18"
+            endcolumn="24"
+            endline="4"
+            endtoken="90"
+            line="3"
+            path="/home/duc/Desktop/code_duplication/Code_Duplication_Test/python/negatives/reverse_string.py"/>
+      <codefragment><![CDATA[def reverse_string(s):
+    loop_reversed = ""
+]]></codefragment>
+   </duplication>
+</pmd-cpd>

@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pmd-cpd xmlns="https://pmd-code.org/schema/cpd-report"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         pmdVersion="7.13.0"
+         timestamp="2025-10-04T15:59:17.736738168+02:00"
+         version="1.0.0"
+         xsi:schemaLocation="https://pmd-code.org/schema/cpd-report https://pmd.github.io/schema/cpd-report_1_0_0.xsd">
+   <file path="/home/duc/Desktop/code_duplication/Code_Duplication_Test/python/type2/process_data_literals.py"
+         totalNumberOfTokens="32"/>
+   <file path="/home/duc/Desktop/code_duplication/Code_Duplication_Test/python/type2/process_data_original.py"
+         totalNumberOfTokens="32"/>
+   <file path="/home/duc/Desktop/code_duplication/Code_Duplication_Test/python/type2/process_data_renamed.py"
+         totalNumberOfTokens="32"/>
+   <duplication lines="4" tokens="16">
+      <file begintoken="2"
+            column="20"
+            endcolumn="18"
+            endline="5"
+            endtoken="17"
+            line="2"
+            path="/home/duc/Desktop/code_duplication/Code_Duplication_Test/python/type2/process_data_literals.py"/>
+      <file begintoken="35"
+            column="17"
+            endcolumn="18"
+            endline="5"
+            endtoken="50"
+            line="2"
+            path="/home/duc/Desktop/code_duplication/Code_Duplication_Test/python/type2/process_data_original.py"/>
+      <codefragment><![CDATA[def process_data_v2(input_list):
+    result = []
+    for item in input_list:
+        if item % 4 == 0:
+]]></codefragment>
+   </duplication>
+   <duplication lines="2" tokens="9">
+      <file begintoken="19"
+            column="21"
+            endcolumn="33"
+            endline="6"
+            endtoken="27"
+            line="5"
+            path="/home/duc/Desktop/code_duplication/Code_Duplication_Test/python/type2/process_data_literals.py"/>
+      <file begintoken="52"
+            column="21"
+            endcolumn="33"
+            endline="6"
+            endtoken="60"
+            line="5"
+            path="/home/duc/Desktop/code_duplication/Code_Duplication_Test/python/type2/process_data_original.py"/>
+      <codefragment><![CDATA[        if item % 4 == 0:
+            result.append(item * 3)
+]]></codefragment>
+   </duplication>
+   <duplication lines="1" tokens="5">
+      <file begintoken="50"
+            column="17"
+            endcolumn="26"
+            endline="5"
+            endtoken="54"
+            line="5"
+            path="/home/duc/Desktop/code_duplication/Code_Duplication_Test/python/type2/process_data_original.py"/>
+      <file begintoken="83"
+            column="18"
+            endcolumn="27"
+            endline="5"
+            endtoken="87"
+            line="5"
+            path="/home/duc/Desktop/code_duplication/Code_Duplication_Test/python/type2/process_data_renamed.py"/>
+      <codefragment><![CDATA[        if item % 2 == 0:
+]]></codefragment>
+   </duplication>
+</pmd-cpd>
