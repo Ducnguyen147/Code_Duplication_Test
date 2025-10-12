@@ -169,3 +169,7 @@ pip install "tree-sitter>=0.25,<0.26" "tree-sitter-language-pack>=0.7"
 ```bash
 python detect_clone_cli_v4.py --dir /home/duc/Desktop/code_duplication/Code_Duplication_Test/python/dolos/type4 --extensions .py --fusion late --prefilter-threshold 0.80 --threshold 0.20 --w-embed 1.0 --w-ast 0.35 --embed-superpass 0.7 --w-lex 0.1 --no-center --ast-no-center --ast-tfidf --lex-mode py-token --lex-n 3 --fp-k 5 --fp-w 4 --min-fp-sim 0.05 --min-fp-total 2 --min-fp-longest 1 --min-ast-sim 0.00 --min-lex-sim 0.00 --debug-components --topk 20
 ``````
+
+```bash
+python3 detect_clone_cli_v7.py --dir /home/duc/Desktop/code_duplication/Code_Duplication_Test/python/hybrid --extensions .py --min-tokens 5 --mode semantic --model BAAI/bge-code-v1
+```
