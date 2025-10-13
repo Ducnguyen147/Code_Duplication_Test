@@ -610,7 +610,7 @@ def main() -> None:
     # Embeddings
     try:
         device = 'cuda' if torch.cuda.is_available() else 'cpu'
-        model = SentenceTransformer(args.model, device=device)
+        model = SentenceTransformer(args.model, device=device, trust_remote_code=True)
     except Exception as exc:
         print(f"Error loading model {args.model}: {exc}", file=sys.stderr); sys.exit(1)
 

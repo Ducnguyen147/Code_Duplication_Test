@@ -173,3 +173,7 @@ python detect_clone_cli_v4.py --dir /home/duc/Desktop/code_duplication/Code_Dupl
 ```bash
 python3 detect_clone_cli_v7.py --dir /home/duc/Desktop/code_duplication/Code_Duplication_Test/python/hybrid --extensions .py --min-tokens 5 --mode semantic --model BAAI/bge-code-v1
 ```
+
+```bash
+python3 detect_clone_cli_v8.py --dir /home/duc/Desktop/code_duplication/Code_Duplication_Test/python/negatives --extensions .py --min-tokens 5 --mode hybrid --prefilter-topM 50 --mutual-nearest
+```
