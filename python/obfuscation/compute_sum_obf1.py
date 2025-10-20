@@ -1,4 +1,3 @@
-# Obfuscation variant 1
 def compute_sum(array):
     result = 0
     for i in range(len(array)):

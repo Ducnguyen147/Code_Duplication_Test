@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pmd-cpd xmlns="https://pmd-code.org/schema/cpd-report"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         pmdVersion="7.13.0"
+         timestamp="2025-10-18T22:24:30.404570119+02:00"
+         version="1.0.0"
+         xsi:schemaLocation="https://pmd-code.org/schema/cpd-report https://pmd.github.io/schema/cpd-report_1_0_0.xsd">
+   <file path="/home/duc/Desktop/code_duplication/Code_Duplication_Test/python/mix/C01_fib_type1_a.py"
+         totalNumberOfTokens="50"/>
+   <file path="/home/duc/Desktop/code_duplication/Code_Duplication_Test/python/mix/C01_fib_type1_b.py"
+         totalNumberOfTokens="50"/>
+   <file path="/home/duc/Desktop/code_duplication/Code_Duplication_Test/python/mix/C01_fib_type2.py"
+         totalNumberOfTokens="49"/>
+   <file path="/home/duc/Desktop/code_duplication/Code_Duplication_Test/python/mix/C01_fib_type4.py"
+         totalNumberOfTokens="44"/>
+   <file path="/home/duc/Desktop/code_duplication/Code_Duplication_Test/python/mix/C02_factorial_type1_a.py"
+         totalNumberOfTokens="32"/>
+   <file path="/home/duc/Desktop/code_duplication/Code_Duplication_Test/python/mix/C02_factorial_type1_b.py"
+         totalNumberOfTokens="32"/>
+   <file path="/home/duc/Desktop/code_duplication/Code_Duplication_Test/python/mix/C02_factorial_type3.py"
+         totalNumberOfTokens="44"/>
+   <file path="/home/duc/Desktop/code_duplication/Code_Duplication_Test/python/mix/C02_factorial_type4.py"
+         totalNumberOfTokens="33"/>
+   <file path="/home/duc/Desktop/code_duplication/Code_Duplication_Test/python/mix/C03_gcd_type1_a.py"
+         totalNumberOfTokens="34"/>
+   <file path="/home/duc/Desktop/code_duplication/Code_Duplication_Test/python/mix/C03_gcd_type1_b.py"
+         totalNumberOfTokens="32"/>
+   <file path="/home/duc/Desktop/code_duplication/Code_Duplication_Test/python/mix/C03_gcd_type2.py"
+         totalNumberOfTokens="34"/>
+   <file path="/home/duc/Desktop/code_duplication/Code_Duplication_Test/python/mix/C03_gcd_type3.py"
+         totalNumberOfTokens="54"/>
+   <file path="/home/duc/Desktop/code_duplication/Code_Duplication_Test/python/mix/C04_prime_type1_a.py"
+         totalNumberOfTokens="53"/>
+   <file path="/home/duc/Desktop/code_duplication/Code_Duplication_Test/python/mix/C04_prime_type1_b.py"
+         totalNumberOfTokens="53"/>
+   <file path="/home/duc/Desktop/code_duplication/Code_Duplication_Test/python/mix/C04_prime_type2.py"
+         totalNumberOfTokens="53"/>
+   <file path="/home/duc/Desktop/code_duplication/Code_Duplication_Test/python/mix/C04_prime_type4.py"
+         totalNumberOfTokens="78"/>
+   <file path="/home/duc/Desktop/code_duplication/Code_Duplication_Test/python/mix/C05_palindrome_type1_a.py"
+         totalNumberOfTokens="43"/>
+   <file path="/home/duc/Desktop/code_duplication/Code_Duplication_Test/python/mix/C05_palindrome_type1_b.py"
+         totalNumberOfTokens="43"/>
+   <file path="/home/duc/Desktop/code_duplication/Code_Duplication_Test/python/mix/C05_palindrome_type3.py"
+         totalNumberOfTokens="74"/>
+   <file path="/home/duc/Desktop/code_duplication/Code_Duplication_Test/python/mix/C05_palindrome_type4.py"
+         totalNumberOfTokens="60"/>
+   <file path="/home/duc/Desktop/code_duplication/Code_Duplication_Test/python/mix/C06_wordcount_type1_a.py"
+         totalNumberOfTokens="41"/>
+   <file path="/home/duc/Desktop/code_duplication/Code_Duplication_Test/python/mix/C06_wordcount_type1_b.py"
+         totalNumberOfTokens="41"/>
+   <file path="/home/duc/Desktop/code_duplication/Code_Duplication_Test/python/mix/C06_wordcount_type2.py"
+         totalNumberOfTokens="41"/>
+   <file path="/home/duc/Desktop/code_duplication/Code_Duplication_Test/python/mix/C06_wordcount_type3.py"
+         totalNumberOfTokens="44"/>
+   <file path="/home/duc/Desktop/code_duplication/Code_Duplication_Test/python/mix/D01_quicksort.py"
+         totalNumberOfTokens="81"/>
+   <file path="/home/duc/Desktop/code_duplication/Code_Duplication_Test/python/mix/D02_matrix_multiply.py"
+         totalNumberOfTokens="109"/>
+   <file path="/home/duc/Desktop/code_duplication/Code_Duplication_Test/python/mix/D03_csv_aggregate.py"
+         totalNumberOfTokens="49"/>
+   <duplication lines="11" tokens="53">
+      <file begintoken="500"
+            column="1"
+            endcolumn="16"
+            endline="11"
+            endtoken="552"
+            line="1"
+            path="/home/duc/Desktop/code_duplication/Code_Duplication_Test/python/mix/C04_prime_type1_a.py"/>
+      <file begintoken="554"
+            column="1"
+            endcolumn="16"
+            endline="12"
+            endtoken="606"
+            line="1"
+            path="/home/duc/Desktop/code_duplication/Code_Duplication_Test/python/mix/C04_prime_type1_b.py"/>
+      <codefragment><![CDATA[def is_prime(n: int) -> bool:
+    if n < 2:
+        return False
+    if n % 2 == 0:
+        return n == 2
+    i = 3
+    while i * i <= n:
+        if n % i == 0:
+            return False
+        i += 2
+    return True
+]]></codefragment>
+   </duplication>
+   <duplication lines="5" tokens="41">
+      <file begintoken="965"
+            column="1"
+            endcolumn="18"
+            endline="5"
+            endtoken="1005"
+            line="1"
+            path="/home/duc/Desktop/code_duplication/Code_Duplication_Test/python/mix/C06_wordcount_type1_a.py"/>
+      <file begintoken="1007"
+            column="1"
+            endcolumn="18"
+            endline="5"
+            endtoken="1047"
+            line="1"
+            path="/home/duc/Desktop/code_duplication/Code_Duplication_Test/python/mix/C06_wordcount_type1_b.py"/>
+      <codefragment><![CDATA[def word_count(s: str) -> dict:
+    counts = {}
+    for w in s.split():
+        counts[w] = counts.get(w, 0) + 1
+    return counts
+]]></codefragment>
+   </duplication>
+</pmd-cpd>

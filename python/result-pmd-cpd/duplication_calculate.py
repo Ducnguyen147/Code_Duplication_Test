@@ -1,99 +1,140 @@
-# command: python3 duplication_calculate.py /home/duc/Desktop/code_duplication/Code_Duplication_Test/python/result-pmd-cpd/hybrid.xml
+"""
+Prints the duplication percentages for all pairs of files detected in a
+PMD‑CPD XML report.  This script uses the pairwise duplication logic
+implemented in `dup_pairwise.py` to identify which files share duplicated
+tokens and calculates the percentage of each file that is duplicated with
+the other file in the pair.
+
+Usage:
+    python3 dup_all_pair_percentages.py report.xml
+
+This will output one line per pair in the form:
+    file1 <-> file2: file1_percent% (of file1), file2_percent% (of file2)
+
+Pairs are sorted by the number of duplicated tokens in descending order.
+
+If you need a JSON output, run `dup_pairwise.py --json` instead.
+"""
 
 from __future__ import annotations
+
+import argparse
+import os
+import sys
 import xml.etree.ElementTree as ET
-from collections import defaultdict
-from typing import Dict, List, Tuple, Iterable
 
-CPD_NS = {"cpd": "https://pmd-code.org/schema/cpd-report"}
+try:
+    from dup_pairwise import compute_pairwise_duplication  # type: ignore
+except ImportError:
+    # Minimal fallback for compute_pairwise_duplication if module isn't available.
+    from collections import defaultdict
+    from typing import Dict, Iterable, List, Tuple
 
-def _union_intervals(intervals: Iterable[Tuple[int, int]]) -> List[Tuple[int, int]]:
-    """Merge inclusive [start, end] token intervals, coalescing overlaps and touching ranges."""
-    sorted_ints = sorted((int(a), int(b)) for a, b in intervals if a is not None and b is not None)
-    merged: List[Tuple[int, int]] = []
-    for s, e in sorted_ints:
-        if not merged:
-            merged.append((s, e))
-            continue
-        ps, pe = merged[-1]
-        if s <= pe + 1:  # overlap or touching -> merge
-            merged[-1] = (ps, max(pe, e))
-        else:
-            merged.append((s, e))
-    return merged
+    CPD_NS = {"cpd": "https://pmd-code.org/schema/cpd-report"}
 
-def compute_per_file_duplication(xml_path: str) -> Dict[str, dict]:
-    """
-    Parse a PMD-CPD XML report and return:
-      { path: {
-           'duplicated_tokens': int,
-           'total_tokens': int,
-           'percent': float,
-           'intervals': [(start_token, end_token), ...]  # merged, inclusive
-        }, ... }
-    """
-    root = ET.parse(xml_path).getroot()
+    def _union_intervals(intervals: Iterable[Tuple[int, int]]) -> List[Tuple[int, int]]:
+        sorted_ints = sorted((int(a), int(b)) for a, b in intervals if a is not None and b is not None)
+        merged: List[Tuple[int, int]] = []
+        for s, e in sorted_ints:
+            if not merged:
+                merged.append((s, e))
+                continue
+            ps, pe = merged[-1]
+            if s <= pe + 1:
+                merged[-1] = (ps, max(pe, e))
+            else:
+                merged.append((s, e))
+        return merged
 
-    # 1) total tokens per file (from top-level <file totalNumberOfTokens="...">)
-    totals: Dict[str, int] = {}
-    for f in root.findall("cpd:file", CPD_NS):
-        p = f.attrib.get("path")
-        t = f.attrib.get("totalNumberOfTokens")
-        if p and t:
-            totals[p] = int(t)
+    def compute_per_file_totals(root: ET.Element) -> Dict[str, int]:
+        totals: Dict[str, int] = {}
+        for f in root.findall("cpd:file", CPD_NS):
+            p = f.attrib.get("path")
+            t = f.attrib.get("totalNumberOfTokens")
+            if p and t:
+                totals[p] = int(t)
+        return totals
 
-    # 2) collect all duplicated token intervals per file from each <duplication>
-    per_file_intervals: Dict[str, List[Tuple[int, int]]] = defaultdict(list)
-    for dup in root.findall("cpd:duplication", CPD_NS):
-        for occ in dup.findall("cpd:file", CPD_NS):
-            p = occ.attrib.get("path")
-            bt = occ.attrib.get("begintoken")
-            et = occ.attrib.get("endtoken")
-            if p and bt and et:
-                per_file_intervals[p].append((int(bt), int(et)))
-
-    # 3) union intervals and compute duplicated tokens / total tokens / percent
-    result: Dict[str, dict] = {}
-    for path, intervals in per_file_intervals.items():
-        merged = _union_intervals(intervals)
-        dup_tokens = sum(e - s + 1 for s, e in merged)  # inclusive
-        total = totals.get(path)
-        if total is None:
-            # Fallback: infer minimal bound if report lacks totals (older formats).
-            total = max(e for _, e in merged)
-        percent = (dup_tokens / total * 100.0) if total else 0.0
-        result[path] = {
-            "duplicated_tokens": dup_tokens,
-            "total_tokens": total,
-            "percent": percent,
-            "intervals": merged,
-        }
-
-    # 4) include files with totals but zero duplications
-    for path, total in totals.items():
-        if path not in result:
-            result[path] = {
-                "duplicated_tokens": 0,
-                "total_tokens": total,
-                "percent": 0.0,
-                "intervals": [],
+    def compute_pairwise_duplication(xml_path: str) -> Dict[Tuple[str, str], dict]:
+        root = ET.parse(xml_path).getroot()
+        totals = compute_per_file_totals(root)
+        pair_intervals: Dict[Tuple[str, str], Dict[str, List[Tuple[int, int]]]] = defaultdict(lambda: defaultdict(list))
+        for dup in root.findall("cpd:duplication", CPD_NS):
+            entries: List[Tuple[str, int, int]] = []
+            for occ in dup.findall("cpd:file", CPD_NS):
+                p = occ.attrib.get("path")
+                bt = occ.attrib.get("begintoken")
+                et = occ.attrib.get("endtoken")
+                if p and bt and et:
+                    entries.append((p, int(bt), int(et)))
+            for i in range(len(entries)):
+                for j in range(i + 1, len(entries)):
+                    pa, bt_a, et_a = entries[i]
+                    pb, bt_b, et_b = entries[j]
+                    key = tuple(sorted((pa, pb)))
+                    pair_intervals[key][pa].append((bt_a, et_a))
+                    pair_intervals[key][pb].append((bt_b, et_b))
+        result: Dict[Tuple[str, str], dict] = {}
+        for pair, file_to_intervals in pair_intervals.items():
+            a, b = pair
+            merged_a = _union_intervals(file_to_intervals[a])
+            merged_b = _union_intervals(file_to_intervals[b])
+            dup_tokens_a = sum(e - s + 1 for s, e in merged_a)
+            dup_tokens_b = sum(e - s + 1 for s, e in merged_b)
+            duplicated_tokens = min(dup_tokens_a, dup_tokens_b)
+            total_a = totals.get(a, max(e for _, e in merged_a))
+            total_b = totals.get(b, max(e for _, e in merged_b))
+            percent_a = duplicated_tokens / total_a * 100.0
+            percent_b = duplicated_tokens / total_b * 100.0
+            result[pair] = {
+                "duplicated_tokens": duplicated_tokens,
+                "percent_of_a": percent_a,
+                "percent_of_b": percent_b,
             }
+        return result
 
-    return result
+
+def main() -> None:
+    parser = argparse.ArgumentParser(
+        description="List duplication percentages for all file pairs in a CPD report."
+    )
+    parser.add_argument("xml", help="Path to CPD XML report (pmd cpd --format xml ...)")
+    args = parser.parse_args()
+
+    xml_path = args.xml
+    if not os.path.exists(xml_path):
+        print(f"Error: XML file '{xml_path}' not found.")
+        sys.exit(1)
+
+    pair_stats = compute_pairwise_duplication(xml_path)
+    if not pair_stats:
+        print("No duplication pairs found in the report.")
+        sys.exit(0)
+
+    # Sort pairs by descending final_percent (average of the two file percentages).
+    # We compute the average of percent_of_a and percent_of_b for each pair as the
+    # sorting key. This ensures that pairs with the highest overall duplication
+    # ratio appear first in the output.
+    sorted_pairs = sorted(
+        pair_stats.items(),
+        key=lambda kv: (kv[1]["percent_of_a"] + kv[1]["percent_of_b"]) / 2.0,
+        reverse=True,
+    )
+
+    for (file_a, file_b), data in sorted_pairs:
+        percent_a = data["percent_of_a"]
+        percent_b = data["percent_of_b"]
+        # Compute a single, symmetric duplication metric by averaging the two file percentages.
+        # This treats each file equally and represents the average proportion of each file
+        # that overlaps with the other. If desired, you could use a different formula,
+        # such as duplicated_tokens * 200 / (total_a + total_b), but that requires
+        # total token counts in the result data.
+        final_percent = (percent_a + percent_b) / 2.0
+        print(
+            f"{file_a} <-> {file_b}: {final_percent:.2f}% duplication "
+            f"(avg of {percent_a:.2f}% and {percent_b:.2f}%)"
+        )
+
 
 if __name__ == "__main__":
-    import argparse, json
-    ap = argparse.ArgumentParser(description="Compute per-file duplication% from PMD-CPD XML.")
-    ap.add_argument("xml", help="Path to CPD XML report (pmd cpd --format xml ...)")
-    ap.add_argument("--json", action="store_true", help="Print JSON instead of a table")
-    args = ap.parse_args()
-
-    res = compute_per_file_duplication(args.xml)
-    if args.json:
-        print(json.dumps(res, indent=2))
-    else:
-        # pretty table sorted by highest duplication%
-        for path, data in sorted(res.items(), key=lambda kv: kv[1]["percent"], reverse=True):
-            print(f"{path}\n  duplicated_tokens={data['duplicated_tokens']}, "
-                  f"total_tokens={data['total_tokens']}, "
-                  f"percent={data['percent']:.2f}%\n  intervals={data['intervals']}\n")
+    main()

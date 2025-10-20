@@ -1,4 +1,3 @@
-# Original function
 def process_data(input_list):
     result = []
     for item in input_list:

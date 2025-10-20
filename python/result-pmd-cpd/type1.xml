@@ -2,7 +2,7 @@
 <pmd-cpd xmlns="https://pmd-code.org/schema/cpd-report"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          pmdVersion="7.13.0"
-         timestamp="2025-10-04T15:57:18.013085067+02:00"
+         timestamp="2025-10-18T16:16:00.352108569+02:00"
          version="1.0.0"
          xsi:schemaLocation="https://pmd-code.org/schema/cpd-report https://pmd.github.io/schema/cpd-report_1_0_0.xsd">
    <file path="/home/duc/Desktop/code_duplication/Code_Duplication_Test/python/type1/calculate_average_comments.py"
@@ -15,95 +15,28 @@
       <file begintoken="2"
             column="25"
             endcolumn="25"
-            endline="5"
+            endline="4"
             endtoken="21"
-            line="2"
+            line="1"
             path="/home/duc/Desktop/code_duplication/Code_Duplication_Test/python/type1/calculate_average_comments.py"/>
       <file begintoken="25"
             column="24"
             endcolumn="25"
-            endline="5"
+            endline="4"
             endtoken="44"
-            line="2"
+            line="1"
             path="/home/duc/Desktop/code_duplication/Code_Duplication_Test/python/type1/calculate_average_original.py"/>
       <file begintoken="48"
             column="25"
             endcolumn="23"
-            endline="5"
+            endline="4"
             endtoken="67"
-            line="2"
+            line="1"
             path="/home/duc/Desktop/code_duplication/Code_Duplication_Test/python/type1/calculate_average_whitespace.py"/>
       <codefragment><![CDATA[def calculate_average_1b(numbers):  # Computes mean value
     total = sum(numbers)  # Sum all elements
     count = len(numbers)  # Count elements
     return total / count  # Return average
-]]></codefragment>
-   </duplication>
-   <duplication lines="1" tokens="3">
-      <file begintoken="2"
-            column="25"
-            endcolumn="34"
-            endline="2"
-            endtoken="4"
-            line="2"
-            path="/home/duc/Desktop/code_duplication/Code_Duplication_Test/python/type1/calculate_average_comments.py"/>
-      <file begintoken="9"
-            column="16"
-            endcolumn="25"
-            endline="3"
-            endtoken="11"
-            line="3"
-            path="/home/duc/Desktop/code_duplication/Code_Duplication_Test/python/type1/calculate_average_comments.py"/>
-      <file begintoken="15"
-            column="16"
-            endcolumn="25"
-            endline="4"
-            endtoken="17"
-            line="4"
-            path="/home/duc/Desktop/code_duplication/Code_Duplication_Test/python/type1/calculate_average_comments.py"/>
-      <file begintoken="25"
-            column="24"
-            endcolumn="33"
-            endline="2"
-            endtoken="27"
-            line="2"
-            path="/home/duc/Desktop/code_duplication/Code_Duplication_Test/python/type1/calculate_average_original.py"/>
-      <file begintoken="32"
-            column="16"
-            endcolumn="25"
-            endline="3"
-            endtoken="34"
-            line="3"
-            path="/home/duc/Desktop/code_duplication/Code_Duplication_Test/python/type1/calculate_average_original.py"/>
-      <file begintoken="38"
-            column="16"
-            endcolumn="25"
-            endline="4"
-            endtoken="40"
-            line="4"
-            path="/home/duc/Desktop/code_duplication/Code_Duplication_Test/python/type1/calculate_average_original.py"/>
-      <file begintoken="48"
-            column="25"
-            endcolumn="39"
-            endline="2"
-            endtoken="50"
-            line="2"
-            path="/home/duc/Desktop/code_duplication/Code_Duplication_Test/python/type1/calculate_average_whitespace.py"/>
-      <file begintoken="55"
-            column="14"
-            endcolumn="23"
-            endline="3"
-            endtoken="57"
-            line="3"
-            path="/home/duc/Desktop/code_duplication/Code_Duplication_Test/python/type1/calculate_average_whitespace.py"/>
-      <file begintoken="61"
-            column="15"
-            endcolumn="25"
-            endline="4"
-            endtoken="63"
-            line="4"
-            path="/home/duc/Desktop/code_duplication/Code_Duplication_Test/python/type1/calculate_average_whitespace.py"/>
-      <codefragment><![CDATA[def calculate_average_1b(numbers):  # Computes mean value
 ]]></codefragment>
    </duplication>
 </pmd-cpd>

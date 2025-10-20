@@ -1,36 +1,12 @@
 {
   "statistics": {
-    "detectionDate": "2025-10-06T22:02:26.373Z",
+    "detectionDate": "2025-10-19T20:56:03.949Z",
     "formats": {
       "python": {
         "sources": {
-          "/home/duc/Desktop/code_duplication/Code_Duplication_Test/python/negatives/reverse_string.py": {
-            "lines": 4,
-            "tokens": 39,
-            "sources": 1,
-            "clones": 2,
-            "duplicatedLines": 2,
-            "duplicatedTokens": 14,
-            "percentage": 50,
-            "percentageTokens": 35.9,
-            "newDuplicatedLines": 0,
-            "newClones": 0
-          },
-          "/home/duc/Desktop/code_duplication/Code_Duplication_Test/python/negatives/median.py": {
-            "lines": 6,
-            "tokens": 76,
-            "sources": 1,
-            "clones": 4,
-            "duplicatedLines": 4,
-            "duplicatedTokens": 20,
-            "percentage": 66.67,
-            "percentageTokens": 26.32,
-            "newDuplicatedLines": 0,
-            "newClones": 0
-          },
-          "/home/duc/Desktop/code_duplication/Code_Duplication_Test/python/negatives/gcd.py": {
-            "lines": 3,
-            "tokens": 37,
+          "mix/D03_csv_aggregate.py": {
+            "lines": 5,
+            "tokens": 73,
             "sources": 1,
             "clones": 0,
             "duplicatedLines": 0,
@@ -39,31 +15,343 @@
             "percentageTokens": 0,
             "newDuplicatedLines": 0,
             "newClones": 0
+          },
+          "mix/D02_matrix_multiply.py": {
+            "lines": 9,
+            "tokens": 159,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "mix/D01_quicksort.py": {
+            "lines": 7,
+            "tokens": 136,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "mix/C06_wordcount_type3.py": {
+            "lines": 7,
+            "tokens": 74,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "mix/C06_wordcount_type2.py": {
+            "lines": 4,
+            "tokens": 63,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "mix/C06_wordcount_type1_b.py": {
+            "lines": 4,
+            "tokens": 63,
+            "sources": 1,
+            "clones": 1,
+            "duplicatedLines": 4,
+            "duplicatedTokens": 63,
+            "percentage": 100,
+            "percentageTokens": 100,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "mix/C06_wordcount_type1_a.py": {
+            "lines": 4,
+            "tokens": 63,
+            "sources": 1,
+            "clones": 1,
+            "duplicatedLines": 4,
+            "duplicatedTokens": 63,
+            "percentage": 100,
+            "percentageTokens": 100,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "mix/C05_palindrome_type4.py": {
+            "lines": 7,
+            "tokens": 94,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "mix/C05_palindrome_type3.py": {
+            "lines": 10,
+            "tokens": 128,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "mix/C05_palindrome_type1_b.py": {
+            "lines": 2,
+            "tokens": 61,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "mix/C05_palindrome_type1_a.py": {
+            "lines": 2,
+            "tokens": 61,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "mix/C04_prime_type4.py": {
+            "lines": 13,
+            "tokens": 153,
+            "sources": 1,
+            "clones": 2,
+            "duplicatedLines": 14,
+            "duplicatedTokens": 143,
+            "percentage": 107.69,
+            "percentageTokens": 93.46,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "mix/C04_prime_type2.py": {
+            "lines": 11,
+            "tokens": 107,
+            "sources": 1,
+            "clones": 1,
+            "duplicatedLines": 6,
+            "duplicatedTokens": 55,
+            "percentage": 54.55,
+            "percentageTokens": 51.4,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "mix/C04_prime_type1_b.py": {
+            "lines": 11,
+            "tokens": 107,
+            "sources": 1,
+            "clones": 2,
+            "duplicatedLines": 10,
+            "duplicatedTokens": 94,
+            "percentage": 90.91,
+            "percentageTokens": 87.85,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "mix/C04_prime_type1_a.py": {
+            "lines": 10,
+            "tokens": 104,
+            "sources": 1,
+            "clones": 1,
+            "duplicatedLines": 10,
+            "duplicatedTokens": 104,
+            "percentage": 100,
+            "percentageTokens": 100,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "mix/C03_gcd_type3.py": {
+            "lines": 7,
+            "tokens": 92,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "mix/C03_gcd_type2.py": {
+            "lines": 3,
+            "tokens": 55,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "mix/C03_gcd_type1_b.py": {
+            "lines": 3,
+            "tokens": 51,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "mix/C03_gcd_type1_a.py": {
+            "lines": 3,
+            "tokens": 55,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "mix/C02_factorial_type4.py": {
+            "lines": 3,
+            "tokens": 51,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "mix/C02_factorial_type3.py": {
+            "lines": 8,
+            "tokens": 81,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "mix/C02_factorial_type1_b.py": {
+            "lines": 5,
+            "tokens": 54,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "mix/C02_factorial_type1_a.py": {
+            "lines": 5,
+            "tokens": 56,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "mix/C01_fib_type4.py": {
+            "lines": 6,
+            "tokens": 71,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "mix/C01_fib_type2.py": {
+            "lines": 8,
+            "tokens": 84,
+            "sources": 1,
+            "clones": 0,
+            "duplicatedLines": 0,
+            "duplicatedTokens": 0,
+            "percentage": 0,
+            "percentageTokens": 0,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "mix/C01_fib_type1_b.py": {
+            "lines": 9,
+            "tokens": 87,
+            "sources": 1,
+            "clones": 1,
+            "duplicatedLines": 6,
+            "duplicatedTokens": 64,
+            "percentage": 66.67,
+            "percentageTokens": 73.56,
+            "newDuplicatedLines": 0,
+            "newClones": 0
+          },
+          "mix/C01_fib_type1_a.py": {
+            "lines": 8,
+            "tokens": 84,
+            "sources": 1,
+            "clones": 1,
+            "duplicatedLines": 6,
+            "duplicatedTokens": 64,
+            "percentage": 75,
+            "percentageTokens": 76.19,
+            "newDuplicatedLines": 0,
+            "newClones": 0
           }
         },
         "total": {
-          "lines": 13,
-          "tokens": 152,
-          "sources": 3,
-          "clones": 3,
-          "duplicatedLines": 3,
-          "duplicatedTokens": 17,
-          "percentage": 23.08,
-          "percentageTokens": 11.18,
+          "lines": 174,
+          "tokens": 2267,
+          "sources": 27,
+          "clones": 5,
+          "duplicatedLines": 30,
+          "duplicatedTokens": 325,
+          "percentage": 17.24,
+          "percentageTokens": 14.34,
           "newDuplicatedLines": 0,
           "newClones": 0
         }
       }
     },
     "total": {
-      "lines": 13,
-      "tokens": 152,
-      "sources": 3,
-      "clones": 3,
-      "duplicatedLines": 3,
-      "duplicatedTokens": 17,
-      "percentage": 23.08,
-      "percentageTokens": 11.18,
+      "lines": 174,
+      "tokens": 2267,
+      "sources": 27,
+      "clones": 5,
+      "duplicatedLines": 30,
+      "duplicatedTokens": 325,
+      "percentage": 17.24,
+      "percentageTokens": 14.34,
       "newDuplicatedLines": 0,
       "newClones": 0
     }
@@ -71,109 +359,181 @@
   "duplicates": [
     {
       "format": "python",
-      "lines": 2,
-      "fragment": ":\n        loop_reversed = char",
+      "lines": 5,
+      "fragment": "def word_count(s: str) -> dict:\n    counts = {}\n    for w in s.split():\n        counts[w] = counts.get(w, 0) + 1\n    return counts",
       "tokens": 0,
       "firstFile": {
-        "name": "negatives/reverse_string.py",
-        "start": 3,
-        "end": 4,
+        "name": "mix/C06_wordcount_type1_a.py",
+        "start": 1,
+        "end": 5,
         "startLoc": {
-          "line": 3,
-          "column": 2,
-          "position": 23
+          "line": 1,
+          "column": 1,
+          "position": 0
         },
         "endLoc": {
-          "line": 4,
-          "column": 5,
-          "position": 30
+          "line": 5,
+          "column": 7,
+          "position": 63
         }
       },
       "secondFile": {
-        "name": "negatives/reverse_string.py",
+        "name": "mix/C06_wordcount_type1_b.py",
         "start": 1,
-        "end": 2,
+        "end": 5,
         "startLoc": {
           "line": 1,
-          "column": 2,
-          "position": 6
+          "column": 1,
+          "position": 0
         },
         "endLoc": {
-          "line": 2,
+          "line": 5,
+          "column": 7,
+          "position": 63
+        }
+      }
+    },
+    {
+      "format": "python",
+      "lines": 5,
+      "fragment": "def is_prime(n: int) -> bool:\n    # same approach; comments/spacing updated\n    if n < 2:\n        return False\n    if n %",
+      "tokens": 0,
+      "firstFile": {
+        "name": "mix/C04_prime_type1_b.py",
+        "start": 1,
+        "end": 5,
+        "startLoc": {
+          "line": 1,
+          "column": 1,
+          "position": 0
+        },
+        "endLoc": {
+          "line": 5,
+          "column": 2,
+          "position": 39
+        }
+      },
+      "secondFile": {
+        "name": "mix/C04_prime_type4.py",
+        "start": 1,
+        "end": 5,
+        "startLoc": {
+          "line": 1,
+          "column": 1,
+          "position": 0
+        },
+        "endLoc": {
+          "line": 5,
           "column": 3,
-          "position": 13
+          "position": 39
         }
       }
     },
     {
       "format": "python",
-      "lines": 2,
-      "fragment": "(xs)\n    n",
+      "lines": 7,
+      "fragment": "(n: int) -> bool:\n    # same approach; comments/spacing updated\n    if n < 2:\n        return False\n    if n % 2 == 0:\n        return n == 2\n    i",
       "tokens": 0,
       "firstFile": {
-        "name": "negatives/median.py",
-        "start": 2,
-        "end": 3,
-        "startLoc": {
-          "line": 2,
-          "column": 7,
-          "position": 14
-        },
-        "endLoc": {
-          "line": 3,
-          "column": 2,
-          "position": 19
-        }
-      },
-      "secondFile": {
-        "name": "negatives/median.py",
+        "name": "mix/C04_prime_type1_b.py",
         "start": 1,
-        "end": 1,
+        "end": 7,
         "startLoc": {
           "line": 1,
-          "column": 7,
+          "column": 9,
           "position": 3
         },
         "endLoc": {
-          "line": 1,
+          "line": 7,
           "column": 2,
-          "position": 6
+          "position": 58
+        }
+      },
+      "secondFile": {
+        "name": "mix/C04_prime_type2.py",
+        "start": 1,
+        "end": 7,
+        "startLoc": {
+          "line": 1,
+          "column": 6,
+          "position": 3
+        },
+        "endLoc": {
+          "line": 7,
+          "column": 2,
+          "position": 58
         }
       }
     },
     {
       "format": "python",
-      "lines": 2,
-      "fragment": "(xs)\n    mid",
+      "lines": 11,
+      "fragment": "def is_prime(n: int) -> bool:\n    if n < 2:\n        return False\n    if n % 2 == 0:\n        return n == 2\n    i = 3\n    while i * i <= n:\n        if n % i == 0:\n            return False\n        i += 2\n    return True",
       "tokens": 0,
       "firstFile": {
-        "name": "negatives/median.py",
+        "name": "mix/C04_prime_type1_a.py",
+        "start": 1,
+        "end": 11,
+        "startLoc": {
+          "line": 1,
+          "column": 1,
+          "position": 0
+        },
+        "endLoc": {
+          "line": 11,
+          "column": 5,
+          "position": 104
+        }
+      },
+      "secondFile": {
+        "name": "mix/C04_prime_type4.py",
+        "start": 1,
+        "end": 12,
+        "startLoc": {
+          "line": 1,
+          "column": 1,
+          "position": 0
+        },
+        "endLoc": {
+          "line": 12,
+          "column": 5,
+          "position": 107
+        }
+      }
+    },
+    {
+      "format": "python",
+      "lines": 7,
+      "fragment": "a, b = 0, 1\n    for _ in range(n):\n        a, b = b, a + b\n    return a\n\nif __name__ == \"__main__\":\n    print(fib(10))",
+      "tokens": 0,
+      "firstFile": {
+        "name": "mix/C01_fib_type1_a.py",
         "start": 3,
-        "end": 4,
+        "end": 9,
         "startLoc": {
           "line": 3,
-          "column": 4,
-          "position": 24
+          "column": 5,
+          "position": 20
         },
         "endLoc": {
-          "line": 4,
-          "column": 4,
-          "position": 29
+          "line": 9,
+          "column": 2,
+          "position": 84
         }
       },
       "secondFile": {
-        "name": "negatives/median.py",
-        "start": 1,
-        "end": 1,
+        "name": "mix/C01_fib_type1_b.py",
+        "start": 3,
+        "end": 10,
         "startLoc": {
-          "line": 1,
-          "column": 7,
-          "position": 3
+          "line": 3,
+          "column": 5,
+          "position": 22
         },
         "endLoc": {
-          "line": 1,
+          "line": 10,
           "column": 2,
-          "position": 6
+          "position": 87
         }
       }
     }
