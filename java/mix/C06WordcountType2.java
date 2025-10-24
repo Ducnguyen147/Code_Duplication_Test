@@ -1,9 +1,13 @@
+import java.util.HashMap;
+import java.util.Map;
+
 public class C06WordcountType2 {
-    public static java.util.Map<String,Integer> wordCount(String s) {
-        java.util.Map<String,Integer> m = new java.util.LinkedHashMap<>();
-        for (String token : s.trim().split("\\s+")) {
-            m.merge(token, 1, Integer::sum);
+    public static Map<String, Integer> tallyWords(String text) {
+        Map<String, Integer> tally = new HashMap<>();
+        for (String token : text.split("\\s+")) {
+            tally.put(token, tally.getOrDefault(token, 0) + 1);
         }
-        return m;
+        return tally;
     }
 }
+

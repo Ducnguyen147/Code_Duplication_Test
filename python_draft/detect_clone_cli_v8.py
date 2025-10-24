@@ -530,7 +530,7 @@ def compute_pairs_late(
     mutual_nearest: bool,
     structure_positive_only: bool = True,
     embed_superpass: float = 0.985,
-    short_token_gate: int = 20,
+    short_token_gate: int = 5,
     token_counts: Optional[List[int]] = None,
     semantic_light_gate: bool = False,
 ) -> List[Tuple[str, str, float]]:
@@ -775,7 +775,7 @@ def main() -> None:
     print(f"Channels → embed:{'yes' if w_e>0 else 'no'}  ast:{'yes' if ast_active else 'no'}  lex:{'yes' if lex_active else 'no'}")
     print(f"Weights  → w_e={w_e}  w_ast={w_a}  w_lex={w_l}")
     print(f"Features → embed:{embed_for_final.shape[1]}  ast:{ast_np.shape[1]}  lex:{lex_np.shape[1]}")
-    print(f"Prefilter: topM={args.prefilter_topM} | Final threshold={args.threshold} | Short-token gate={20} tokens")
+    print(f"Prefilter: topM={args.prefilter_topM} | Final threshold={args.threshold} | Short-token gate={5} tokens")
 
     # Prefilter neighbors (top-M)
     neigh_idx, _neigh_sim = prefilter_neighbors(prefilter_np, topM=args.prefilter_topM)
@@ -795,7 +795,7 @@ def main() -> None:
         mutual_nearest=args.mutual_nearest,
         structure_positive_only=True,
         embed_superpass=args.embed_superpass,
-        short_token_gate=20,
+        short_token_gate=5,
         token_counts=tok_counts,
         semantic_light_gate=(args.mode == "semantic-plus"),
     )

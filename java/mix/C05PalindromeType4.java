@@ -1,10 +1,21 @@
+import java.util.Deque;
+import java.util.LinkedList;
+
 public class C05PalindromeType4 {
-    public static boolean isPalindrome(String s) {
-        java.util.ArrayDeque<Character> dq = new java.util.ArrayDeque<>();
-        for (char c : s.toCharArray()) dq.add(c);
-        while (dq.size() > 1) {
-            if (!dq.pollFirst().equals(dq.pollLast())) return false;
+    public static boolean isPalindrome(String text) {
+        Deque<Character> dq = new LinkedList<>();
+        for (char ch : text.toCharArray()) {
+            if (Character.isLetterOrDigit(ch)) {
+                dq.addLast(Character.toLowerCase(ch));
+            }
         }
+
+        while (dq.size() > 1) {
+            if (!dq.removeFirst().equals(dq.removeLast())) {
+                return false;
+            }
+        }
+
         return true;
     }
 }

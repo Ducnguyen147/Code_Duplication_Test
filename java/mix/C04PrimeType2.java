@@ -1,10 +1,18 @@
 public class C04PrimeType2 {
-    public static boolean isPrime(int n) {
-        if (n < 2) return false;
-        int d = 2;
-        while (d * d <= n) {
-            if (n % d == 0) return false;
-            d += (d == 2) ? 1 : 2; // skip even numbers after 2
+    // Type-2: renamed function/variables
+    public static boolean prime(int n) {
+        if (n < 2) {
+            return false;
+        }
+        if (n % 2 == 0) {
+            return n == 2;
+        }
+        int k = 3;
+        while (k * k <= n) {
+            if (n % k == 0) {
+                return false;
+            }
+            k += 2;
         }
         return true;
     }

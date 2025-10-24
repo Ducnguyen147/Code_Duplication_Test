@@ -1,7 +1,8 @@
 public class C02FactorialType1B {
-    public static long fact(int n) {
-        long r = 1;
-        for (int i = 2; i <= n; i++) r *= i;
-        return r;
+    // Comments + different variables names
+    public static int fact(int n) {
+        int result = 1;
+        for (int i = 2; i <= n; i++) result *= i;
+        return result;
     }
 }

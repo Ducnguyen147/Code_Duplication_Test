@@ -3,8 +3,10 @@ public class D02MatrixMultiply {
         int m = A.length;
         int n = A[0].length;
         int p = B[0].length;
-        if (B.length != n) throw new IllegalArgumentException("shape mismatch");
+        assert B.length == n;
+
         int[][] C = new int[m][p];
+
         for (int i = 0; i < m; i++) {
             for (int k = 0; k < n; k++) {
                 int aik = A[i][k];

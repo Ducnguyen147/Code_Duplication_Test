@@ -1,13 +1,18 @@
 public class C01FibType2 {
-    public static long fib(int n) {
-        long a = 0, b = 1;
+    // Variables name change
+    public static int fib(int n) {
+        int x = 0, y = 1;
         int k = 0;
         while (k < n) {
-            long t = a;
-            a = b;
-            b = t + b;
+            int t = x;
+            x = y;
+            y = t + y;
             k++;
         }
-        return a;
+        return x;
+    }
+
+    public static void main(String[] args) {
+        System.out.println(fib(10));
     }
 }

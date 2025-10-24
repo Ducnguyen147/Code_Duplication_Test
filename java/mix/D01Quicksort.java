@@ -1,19 +1,31 @@
+import java.util.ArrayList;
+import java.util.List;
+
 public class D01Quicksort {
-    public static java.util.List<Integer> quicksort(java.util.List<Integer> a) {
-        if (a.size() <= 1) return new java.util.ArrayList<>(a);
-        int pivot = a.get(a.size() / 2);
-        java.util.List<Integer> left = new java.util.ArrayList<>();
-        java.util.List<Integer> mid  = new java.util.ArrayList<>();
-        java.util.List<Integer> right= new java.util.ArrayList<>();
-        for (int x : a) {
-            if (x < pivot) left.add(x);
-            else if (x > pivot) right.add(x);
-            else mid.add(x);
+    public static List<Integer> quicksort(List<Integer> a) {
+        if (a.size() <= 1) {
+            return new ArrayList<>(a);
         }
-        left = quicksort(left);
-        right = quicksort(right);
-        left.addAll(mid);
-        left.addAll(right);
-        return left;
+
+        int pivot = a.get(a.size() / 2);
+        List<Integer> left = new ArrayList<>();
+        List<Integer> mid = new ArrayList<>();
+        List<Integer> right = new ArrayList<>();
+
+        for (int x : a) {
+            if (x < pivot) {
+                left.add(x);
+            } else if (x == pivot) {
+                mid.add(x);
+            } else {
+                right.add(x);
+            }
+        }
+
+        List<Integer> sorted = new ArrayList<>();
+        sorted.addAll(quicksort(left));
+        sorted.addAll(mid);
+        sorted.addAll(quicksort(right));
+        return sorted;
     }
 }

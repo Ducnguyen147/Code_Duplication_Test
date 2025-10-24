@@ -1,6 +1,7 @@
+import java.util.stream.IntStream;
+
 public class C02FactorialType4 {
-    public static long fact(int n) {
-        if (n <= 1) return 1;
-        return n * fact(n - 1);
+    public static int factorial(int n) {
+        return n > 0 ? IntStream.rangeClosed(1, n).reduce(1, (a, b) -> a * b) : 1;
     }
 }

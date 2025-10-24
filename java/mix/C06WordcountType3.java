@@ -1,12 +1,13 @@
+import java.util.HashMap;
+import java.util.Map;
+
 public class C06WordcountType3 {
-    public static java.util.Map<String,Integer> wordCount(String s) {
-        java.util.Map<String,Integer> m = new java.util.HashMap<>();
-        String[] arr = s.split("\\s+");
-        for (int i = 0; i < arr.length; i++) {
-            String w = arr[i];
-            Integer v = m.get(w);
-            m.put(w, (v == null ? 1 : v + 1));
+    public static Map<String, Integer> wordCount(String s) {
+        Map<String, Integer> counts = new HashMap<>();
+        for (String w : s.split("\\s+")) {
+            counts.put(w, counts.getOrDefault(w, 0) + 1);
         }
-        return m;
+        Object _ = null; // Obfuscation
+        return counts;
     }
 }

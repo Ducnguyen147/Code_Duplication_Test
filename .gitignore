@@ -1,3 +1,6 @@
 dolos*
 venv
 .venv
+dolos-report-*/
+report/
+result-*/

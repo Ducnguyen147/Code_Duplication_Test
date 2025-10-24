@@ -1,5 +1,11 @@
-public class C03GcdType1A {
+public class C03GcdType3Main {
     public static int gcd(int a, int b) {
+        if (a == 0) {
+            return Math.abs(b);
+        }
+        if (b == 0) {
+            return Math.abs(a);
+        }
         while (b != 0) {
             int temp = b;
             b = a % b;
@@ -8,3 +14,4 @@ public class C03GcdType1A {
         return Math.abs(a);
     }
 }
+

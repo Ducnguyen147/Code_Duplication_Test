@@ -1,9 +1,11 @@
+import java.util.HashMap;
+import java.util.Map;
+
 public class D03CsvAggregate {
-    public static java.util.Map<String, Double> aggregate(java.util.List<String> lines) {
-        java.util.Map<String, Double> acc = new java.util.HashMap<>();
+    public static Map<String, Double> aggregateLines(Iterable<String> lines) {
+        Map<String, Double> acc = new HashMap<>();
         for (String line : lines) {
-            String[] parts = line.trim().split(",");
-            if (parts.length != 2) continue;
+            String[] parts = line.strip().split(",");
             String key = parts[0];
             double val = Double.parseDouble(parts[1]);
             acc.put(key, acc.getOrDefault(key, 0.0) + val);
