@@ -1,4 +1,4 @@
-public class C03GcdType3Main {
+public class C03GcdType3 {
     public static int gcd(int a, int b) {
         if (a == 0) {
             return Math.abs(b);

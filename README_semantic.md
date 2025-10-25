@@ -15,7 +15,7 @@ Semantic Scholar
 
 When --fusion late, a pair (i, j) passes through:
 
-FAISS prefilter on the embedding space: keep only neighbors with embed‑cosine ≥ --prefilter-threshold.
+AISS prefilter on the embedding space: keep only neighbors with embed‑cosine ≥ --prefilter-threshold.
 
 Structural gate(s): require ast_cos ≥ --min-ast-sim and/or lex_cos ≥ --min-lex-sim. (If both AST and Lex are off, gate is bypassed.)
 
