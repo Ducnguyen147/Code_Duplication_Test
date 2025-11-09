@@ -1,125 +1,179 @@
-0) What the script does (in one minute)
 
-Semantic channel (embeddings): encodes each file with a Sentence‑Transformers model (default: CodeBERT cd‑ft). Cosine between L2‑normalized vectors ≈ semantic similarity.
+## Dolos
+Link: https://dolos.ugent.be/docs/running.html
+```bash
+curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
+sudo apt-get install -y nodejs
+sudo npm install -g @dodona/dolos
+zip -r duplication1.zip duplication1
+dolos run -f web -l python duplication1.zip
+dolos run -f csv -l python duplication1.zip # Parse to csv
+dolos run -l python duplication1.zip
 
-Structural channels (optional):
+```
 
-AST bag‑of‑features with Tree‑sitter (node types, parent→child edges, depth buckets), with TF‑IDF + optional centering to reduce generic syntax effects.
+## JPlag
+JPlag: use -t 9 as a robust default for typical coursework; the original JPlag evaluation found 7–11 to be the most reliable range and set the default to 9. For your small artificial snippets, go lower (-t 5–7) to avoid missing short matches (but expect more false positives).
 
-Lexical vector made from token n‑grams (default Python tokens with identifier anonymization) or raw character n‑grams.
+1. Download java version 21
+2. Download JPlag `jplag-6.0.0-jar-with-dependencies.jar` from `https://github.com/jplag/jplag/releases`
+3. Commands
+- Type 1:
+```bash
+java -jar jplag-6.0.0-jar-with-dependencies.jar -l python3 -t 7 -r jplag/type1/results-jplag-type1 jplag/type1
+```
+- Type 2:
+```bash
+java -jar jplag-6.0.0-jar-with-dependencies.jar -l python3 -t 10 -r jplag/type2/results-jplag-type2 jplag/type2
+```
+- Type 3:
+```bash
+java -jar jplag-6.0.0-jar-with-dependencies.jar -l python3 -t 4 -r jplag/type3/results-jplag-type3 jplag/type3
+```
+- Type 4;
+```bash
+java -jar jplag-6.0.0-jar-with-dependencies.jar -l python3 -t 3 -r jplag/type4/results-jplag-type4 jplag/type4
+```
+- Control flow
+```bash
+java -jar jplag-6.0.0-jar-with-dependencies.jar -l python3 -t 5 -r jplag/control_flow/results-jplag-cf jplag/control_flow
+```
+- Hybrid
+```bash
+java -jar jplag-6.0.0-jar-with-dependencies.jar -l python3 -t 5-r jplag/hybrid/results-jplag-hybrid jplag/hybrid
+```
 
-Local fingerprints (optional but powerful on small code): token k‑grams with optional winnowing (MOSS) to select stable anchors; the script computes Jaccard‑like similarity, total overlap, and longest matching run to gate pairs before final scoring—these are the same coverage‑style metrics popularized by MOSS and used in Dolos. 
-Semantic Scholar
+## PMD-CPD
+PMD‑CPD: there’s no built‑in default in the CLI (you must supply a value), but common guidance and examples use ~100 tokens for normal projects (and the Maven plugin’s default is 100). For your short snippets, start at 10–30 tokens per language subset (Python near 10–20, Java/C++ 20–30), then sweep.
 
-1) The score you see
+1. sudo apt install -y unzip
+2. wget https://github.com/pmd/pmd/releases/download/pmd_releases%2F7.13.0/pmd-dist-7.13.0-bin.zip
+3. unzip pmd-dist-7.13.0-bin.zip
+4. cd pmd-bin-7.13.0
+5. export PATH="$PATH:$(pwd)/bin"
+6. Test version: `pmd --version``
+7. 
+- Type 1:
+```bash
+pmd cpd   --minimum-tokens 20   --dir /home/duc/Desktop/code_duplication/Code_Duplication_Test/python/dolos/type1   --language python   --format xml > /home/duc/Desktop/code_duplication/Code_Duplication_Test/python/dolos/type1/cpd-type1.xml
+```
 
-When --fusion late, a pair (i, j) passes through:
+- Type 2:
+```bash
+--ignore-identifiers    # anonymize all identifier names
+--ignore-literals       # anonymize all literal values
+```
 
-AISS prefilter on the embedding space: keep only neighbors with embed‑cosine ≥ --prefilter-threshold.
+ The official docs specify these flags are only implemented for Java and C++ lexers: https://pmd.github.io/pmd/pmd_userdocs_cpd.html?utm_source=chatgpt.com
 
-Structural gate(s): require ast_cos ≥ --min-ast-sim and/or lex_cos ≥ --min-lex-sim. (If both AST and Lex are off, gate is bypassed.)
+```bash
+pmd cpd   --minimum-tokens 5   --dir /home/duc/Desktop/code_duplication/Code_Duplication_Test/python/dolos/type2 --ignore-identifiers --ignore-literals  --language python   --format xml > /home/duc/Desktop/code_duplication/Code_Duplication_Test/python/dolos/type2/cpd-type2.xml
+```
 
-Fingerprint gate (if enabled): require
-fp_sim ≥ --min-fp-sim and fp_total ≥ --min-fp-total and fp_longest ≥ --min-fp-longest.
-(Pairs with embed_cos ≥ --embed-superpass bypass the fp gate—useful for deep Type‑4 similarities.)
+- Type 3:
+```bash
+pmd cpd   --minimum-tokens 5 --dir /home/duc/Desktop/code_duplication/Code_Duplication_Test/python/dolos/type3  --language python   --format xml > /home/duc/Desktop/code_duplication/Code_Duplication_Test/python/dolos/type3/cpd-type3.xml
+```
 
-Final score
-s = (w_embed·embed_cos + w_ast·max(ast_cos,0) + w_lex·max(lex_cos,0)) / (w_embed + w_ast + w_lex)
-unless --allow-negative-structure is set, structural cosines are clipped at 0 (they can only help, not hurt).
+- Type 4:
+```bash
+pmd cpd   --minimum-tokens 5 --dir /home/duc/Desktop/code_duplication/Code_Duplication_Test/python/dolos/type4  --language python   --format xml > /home/duc/Desktop/code_duplication/Code_Duplication_Test/python/dolos/type4/cpd-type4.xml
+```
 
-2) Arguments, grouped and explained
-A) Inputs & model
+- Control Flow:
+```bash
+pmd cpd   --minimum-tokens 5 --dir /home/duc/Desktop/code_duplication/Code_Duplication_Test/python/dolos/control_flow  --language python   --format xml > /home/duc/Desktop/code_duplication/Code_Duplication_Test/python/dolos/control_flow/cpd-cf.xml
+```
 
---dir PATH
-Root folder to scan (recursively).
+- Hybrid
+```bash
 
---extensions .py .java ...
-Filters files by suffix. If omitted, all files under --dir are read.
+```
 
---model NAME (default: mchochlov/codebert-base-cd-ft)
-Sentence‑Transformers model for embeddings.
+## JSCPD
+jscpd: default is --min-tokens 50 and --min-lines 5; that’s good for real‑world repos, but too high for shortcode snippets. Start at --min-tokens 10–20 and --min-lines 1–2, then sweep.
 
---batch-size INT (default: 16)
-Embedding batch size; raise if you have GPU memory.
+1. sudo npm install -g jscpd
+2. jscpd --version
+3.
+- Type 1:
+```bash
+jscpd /home/duc/Desktop/code_duplication/Code_Duplication_Test/python/jscpd/type1/type1a.py /home/duc/Desktop/code_duplication/Code_Duplication_Test/python/jscpd/type1/type1b.py --format python --min-tokens 10 --min-lines 1 --mode weak --reporters console,html,json --output /home/duc/Desktop/code_duplication/Code_Duplication_Test/python/jscpd/type1/reports
+```
 
-B) Fusion & thresholds
+- Type 2:
+```bash
+jscpd /home/duc/Desktop/code_duplication/Code_Duplication_Test/python/jscpd/type2/type2a.py /home/duc/Desktop/code_duplication/Code_Duplication_Test/python/jscpd/type2/type2b.py --format python --min-tokens 3 --min-lines 1 --mode weak --reporters console,html,json --output /home/duc/Desktop/code_duplication/Code_Duplication_Test/python/jscpd/type2/report
+```
+a-b: Token = 3
+a-c: Token = 5
+b-c: Token = 3
 
---fusion {late, concat} (default: late)
-late = prefilter on embeddings, then re‑score with structure and fp gates.
-concat = build one big vector and search once (fast, less controllable).
+- Type 3:
+```bash
+jscpd /home/duc/Desktop/code_duplication/Code_Duplication_Test/python/jscpd/type3/type3a.py /home/duc/Desktop/code_duplication/Code_Duplication_Test/python/jscpd/type3/type3b.py --format python --min-tokens 6 --min-lines 1 --mode weak --reporters console,html,json --output /home/duc/Desktop/code_duplication/Code_Duplication_Test/python/jscpd/type3/reports
+```
+a-b: Token = 5
+a-c: Token = 4
+b-c: Token = 5
 
---prefilter-threshold FLOAT (default: 0.75)
-Embedding cosine cut for the FAISS prefilter (before gates).
-Lower this for tiny datasets so near‑misses aren’t thrown away too early.
+- Type 4:
+```bash
+jscpd /home/duc/Desktop/code_duplication/Code_Duplication_Test/python/jscpd/type4/type4a.py /home/duc/Desktop/code_duplication/Code_Duplication_Test/python/jscpd/type4/type4b.py --format python --min-tokens 3 --min-lines 1 --mode weak --reporters console,html,json --output /home/duc/Desktop/code_duplication/Code_Duplication_Test/python/jscpd/type4/reports
+```
+a-b: Token = 4
+a-c: token = 4
+b-c: Token = 4
 
---threshold FLOAT (default: 0.85)
-Final fused‑score cut; pairs below are not reported.
+- Control flow:
+```bash
+jscpd /home/duc/Desktop/code_duplication/Code_Duplication_Test/python/jscpd/control_flow/cf_b.py /home/duc/Desktop/code_duplication/Code_Duplication_Test/python/jscpd/control_flow/cf_a.py --format python --min-tokens 4 --min-lines 1 --mode weak --reporters console,html,json --output /home/duc/Desktop/code_duplication/Code_Duplication_Test/python/jscpd/control_flow/reports
+```
 
-C) Channel weights
+- Hybrid:
+```bash
+jscpd --skipLocal /home/duc/Desktop/code_duplication/Code_Duplication_Test/python/jscpd/hybrid/a /home/duc/Desktop/code_duplication/Code_Duplication_Test/python/jscpd/hybrid/b --format python --min-tokens 4 --min-lines 1 --mode weak --reporters console,html,json --output /home/duc/Desktop/code_duplication/Code_Duplication_Test/python/jscpd/hybrid/reports
+```
 
---w-embed FLOAT (default: 1.0)
-Weight of the semantic channel.
+## Semantic comparison
+```bash
+python3 semantic_comparison.py --files dolos/type4/dolos-report-20250406T191928512Z-type4/files.csv --pairs dolos/type4/dolos-report-20250406T191928512Z-type4/pairs.csv --output semantic_pairs.csv --threshold 0.5 --device cpu
+```
 
---w-ast FLOAT (default: 0.6)
-Weight of AST structural channel (if active).
+```bash
+python3 semantic_clone_detector.py --file1 path1 --file2 path2 --threshold 0.7
+```
 
---w-lex FLOAT (default: 0.1)
-Weight of lexical vector channel (if active).
-Rule of thumb: start high on embeddings; add 0.2–0.6 AST for Type‑1/2/3 robustness; keep lex small (0.05–0.2) to avoid over‑rewarding boilerplate.
+```bash
+python3 semantic_clone_binary.py --file1 path1 --file2 path2 --threshold 0.7
+```
 
-D) AST options (Tree‑sitter)
+```bash
+python detect_clones_cli.py --dir /home/duc/Desktop/code_duplication/Code_Duplication_Test/python/dolos/non_similar --extensions .py .java --model mchochlov/codebert-base-cd-ft --threshold 0.85
+```
 
---no-ast
-Disable AST channel completely.
+```bash
+python detect_clone_cli_v3.py --dir /home/duc/Desktop/code_duplication/Code_Duplication_Test/python/dolos/non_similar --extensions .py .java --fusion concat --w-embed 1.0 --w-ast 0.6 --w-lex 0.2 --threshold 0.2
+```
 
---ast-dim INT (default: 2048)
-Hash space for AST features; 2–8k are typical.
+```bash
+python detect_clone_cli_v3.py --dir /home/duc/Desktop/code_duplication/Code_Duplication_Test/python/dolos/type1 --extensions .py .java --fusion late --prefilter-threshold 0.75 --w-embed 1.0 --w-ast 0.7 --w-lex 0.2 --threshold 0.2
+```
+<!-- # 1) Clean out conflicting bits
+pip uninstall -y tree_sitter_languages tree-sitter-language-pack tree-sitter
 
---ast-tfidf / --ast-no-tfidf (default: TF‑IDF ON)
-Apply TF‑IDF to down‑weight ubiquitous syntax tokens.
+# 2) Install a modern, compatible stack
+pip install "tree-sitter>=0.25,<0.26" "tree-sitter-language-pack>=0.7"
+# (py-tree-sitter 0.25.x docs show Parser(language, ...))  ← verified. :contentReference[oaicite:3]{index=3} -->
 
---ast-stop-topk INT (default: 0)
-Drop the k most frequent AST dims (by total count) before TF‑IDF.
-Helpful on large sets (e.g., 32–64) to remove ultra‑common scaffolding.
+```bash
+python detect_clone_cli_v4.py --dir /home/duc/Desktop/code_duplication/Code_Duplication_Test/python/dolos/type4 --extensions .py --fusion late --prefilter-threshold 0.80 --threshold 0.20 --w-embed 1.0 --w-ast 0.35 --embed-superpass 0.7 --w-lex 0.1 --no-center --ast-no-center --ast-tfidf --lex-mode py-token --lex-n 3 --fp-k 5 --fp-w 4 --min-fp-sim 0.05 --min-fp-total 2 --min-fp-longest 1 --min-ast-sim 0.00 --min-lex-sim 0.00 --debug-components --topk 20
+``````
 
---ast-center / --ast-no-center (default: OFF)
-Mean‑center AST vectors after TF‑IDF; good on large N, but can be noisy on very small corpora.
+```bash
+python3 detect_clone_cli_v7.py --dir /home/duc/Desktop/code_duplication/Code_Duplication_Test/python/hybrid --extensions .py --min-tokens 5 --mode semantic --model BAAI/bge-code-v1
+```
 
-E) Lexical vector options
-
---no-lex
-Disable lexical vector channel.
-
---lex-mode {py-token, char} (default: py-token)
-py-token = Python tokenizer with identifier anonymization (NAME → ID, NUMBER → NUM) and punctuation/keywords kept—similar to classic token‑based plagiarism detectors. 
-arXiv
-
-char = raw character n‑grams (language‑agnostic, more boilerplate‑prone).
-
---lex-n INT (default: 3)
-N‑gram length (token or character). For tokens, 3–5 works well.
-
---lex-dim INT (default: 4096)
-Hash space for lexical features.
-
-F) Fingerprint (MOSS/Dolos‑style) gate
-
---no-fp
-Disable fingerprint gating entirely (not recommended for tiny files).
-
---fp-k INT (default: 5)
-Token k‑gram size used to form fingerprints. For short functions, use smaller values (3–4) to avoid “zero fingerprints”.
-
---fp-w INT (default: 4)
-Winnowing window; 0 keeps all k‑grams. Standard winnowing picks the minimum hash per sliding window to create a stable, position‑aware subset (MOSS).
-
---min-fp-sim FLOAT (default: 0.12)
-Minimum Jaccard‑like similarity of fingerprint multisets.
-
---min-fp-total INT (default: 4)
-Minimum count of intersecting fingerprints (coverage).
-
---min-fp-longest INT (default: 2)
-Minimum length of the longest common contiguous run of fingerprints (robust “long match” evidence).
-
-These three gates mirror the similarity / total overlap / longest fragment metrics used by Dolos to balance recall and precision on short programs.
+```bash
+python3 detect_clone_cli_v8.py --dir /home/duc/Desktop/code_duplication/Code_Duplication_Test/python/negatives --extensions .py --min-tokens 5 --mode hybrid --prefilter-topM 50 --mutual-nearest
+```

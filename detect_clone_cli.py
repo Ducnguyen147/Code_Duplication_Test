@@ -460,7 +460,7 @@ def compute_structural_features(
     lex_dim: int,
     lex_n: int,
     use_lex: bool,
-    lex_mode: str,   # 'token' or 'char'
+    lex_mode: str,
     fp_k: int,
     fp_w: int,
     use_fp: bool,
@@ -473,7 +473,6 @@ def compute_structural_features(
     fp_ctr_by_file: List[Counter] = []
     tok_counts: List[int] = []
 
-    # AST parsers
     parser_cache: Dict[str, Optional[Parser]] = {}
     if use_ast and _TS_AVAILABLE and _TS_LANGPACK:
         langs_needed = set(filter(None, (guess_ts_language_from_ext(p) for p in file_paths)))
@@ -486,14 +485,12 @@ def compute_structural_features(
         text = read_text(path)
         p_lower = path.lower()
 
-        # AST
         if use_ast and parser_cache:
             lang_name = guess_ts_language_from_ext(path)
             parser = parser_cache.get(lang_name) if (lang_name in parser_cache) else None
             ast_vec = structural_vector_from_ast(text, parser, ast_dim) if parser else np.zeros(ast_dim, np.float32)
             ast_rows.append(ast_vec)
 
-        # --- Token streams (for lex + fingerprints) ---
         toks: List[str] = []
         lang_name = guess_ts_language_from_ext(path)
         parser = parser_cache.get(lang_name) if (parser_cache and lang_name in parser_cache) else None
@@ -514,7 +511,6 @@ def compute_structural_features(
         tokens_by_file.append(toks)
         tok_counts.append(len(toks))
 
-        # Lex vec
         if use_lex:
             if lex_mode in ("token", "py-token") and toks:
                 lex_rows.append(token_ngram_vector(toks, lex_n, lex_dim))
@@ -529,7 +525,6 @@ def compute_structural_features(
                         vec[_stable_bucket(f"g:{key}", lex_dim)] += 1.0
                     lex_rows.append(vec)
 
-        # Fingerprints
         if use_fp and toks:
             seq, ctr = fp_sequence(toks, fp_k, fp_w)
             fp_seq_by_file.append(seq)
@@ -538,13 +533,11 @@ def compute_structural_features(
             fp_seq_by_file.append([])
             fp_ctr_by_file.append(Counter())
 
-    # stack AST
     if use_ast and ast_rows:
         ast_mat = np.vstack(ast_rows)
         ast_mat = stop_topk(ast_mat, ast_stop_topk)
         ast_mat = apply_tfidf(ast_mat) if ast_tfidf else l2_normalize_rows(ast_mat)
 
-    # stack lex
     if use_lex and lex_rows:
         lex_mat = np.vstack(lex_rows)
         lex_mat = apply_tfidf(lex_mat)
@@ -617,7 +610,6 @@ def compute_pairs_late(
     lex_active = lex_np.size > 0 and np.any(lex_np) and w_lex > 0.0
 
     n = embed_np_final.shape[0]
-    # build reverse neighbor sets for mutual-nearest filtering
     neigh_sets = [set(row) for row in neigh_idx]
     pairs: List[Tuple[str, str, float]] = []
 
@@ -628,7 +620,6 @@ def compute_pairs_late(
         for j in neigh_idx[i]:
             if j == i or i > j:
                 continue
-            # mutual nearest pruning (optional)
             if mutual_nearest and i not in neigh_sets[j]:
                 continue
 
@@ -640,31 +631,25 @@ def compute_pairs_late(
 
             if structure_positive_only:
                 sim_a = max(sim_a, 0.0); sim_l = max(sim_l, 0.0)
-
-            # --- fingerprint gate (and short-file hard gate) ---
             fpS = jaccard_from_counters(fp_ctr[i], fp_ctr[j]) if fp_ctr else 0.0
             fpT = total_overlap(fp_ctr[i], fp_ctr[j]) if fp_ctr else 0
             fpL = longest_common_run(fp_seq[i], fp_seq[j]) if fp_seq else 0
-
-            # short-file hard gate — apply ONLY if both token streams exist
             has_tokens = token_counts is not None and (token_counts[i] > 0 and token_counts[j] > 0)
             is_short = has_tokens and (token_counts[i] < short_token_gate or token_counts[j] < short_token_gate)
             if is_short:
                 if not (fpS >= min_fp_sim and fpT >= min_fp_total and fpL >= min_fp_longest):
-                    if sim_e < embed_superpass:  # allow extreme semantic superpass
+                    if sim_e < embed_superpass:
                         continue
 
-            # structural or semantic+light fingerprint gate
             gate_fail = True
             if ast_active and sim_a >= min_ast_sim: gate_fail = False
             if lex_active and sim_l >= min_lex_sim: gate_fail = False
             if (not ast_active and not lex_active):
                 if semantic_light_gate:
-                    # require a *tiny* fingerprint signal unless embed is extreme
                     if (fpS >= min_fp_sim and fpT >= max(1, min_fp_total // 2)) or sim_e >= embed_superpass:
                         gate_fail = False
                 else:
-                    gate_fail = False  # pure semantic mode: no structure requirement
+                    gate_fail = False
             if gate_fail:
                 continue
 
@@ -686,14 +671,12 @@ def _auto_profile(args, N: int):
     """
     mt = max(2, int(args.min_tokens))
 
-    # --- fingerprint parameters from min-tokens (MOSS-like) ---
     args.fp_k = max(4, min(7, mt))
     args.fp_w = max(4, args.fp_k - 1)
     args.min_fp_total   = max(2, args.fp_k - 1)
     args.min_fp_longest = max(1, (args.fp_k - 2) // 2)
-    args.min_fp_sim = 0.05 + 0.01 * max(0, args.fp_k - 5)   # 0.05..0.07 typical
+    args.min_fp_sim = 0.05 + 0.01 * max(0, args.fp_k - 5)
 
-    # --- channels & weights ---
     args.w_embed = 1.0
     args.w_ast   = 0.35
     args.w_lex   = 0.10
@@ -706,10 +689,8 @@ def _auto_profile(args, N: int):
     args.lex_dim  = 4096
     args.ast_tfidf = True
 
-    # --- thresholds ---
-    args.prefilter_topM = max(5, int(args.prefilter_topM))  # sane minimum
+    args.prefilter_topM = max(5, int(args.prefilter_topM))
 
-    # final threshold by mode
     if args.mode == "semantic":
         args.threshold = 0.40 if getattr(args, "threshold", None) is None else args.threshold
         args.no_ast = True; args.no_lex = True; args.w_ast = 0.0; args.w_lex = 0.0
@@ -719,37 +700,31 @@ def _auto_profile(args, N: int):
         args.threshold = 0.38 if getattr(args, "threshold", None) is None else args.threshold
         args.no_ast = True; args.no_lex = True; args.w_ast = 0.0; args.w_lex = 0.0
         args.min_ast_sim = 0.0; args.min_lex_sim = 0.0
-        args.semantic_light_gate = True   # <-- key difference
+        args.semantic_light_gate = True
     elif args.mode == "structural":
         args.threshold = 0.30 if getattr(args, "threshold", None) is None else args.threshold
         args.w_embed = 0.0
         args.no_ast = False; args.no_lex = False
         args.min_ast_sim = 0.03; args.min_lex_sim = 0.03
         args.semantic_light_gate = False
-    else:  # hybrid (recommended)
+    else:  # hybrid
         args.threshold = 0.32 if getattr(args, "threshold", None) is None else args.threshold
         args.min_ast_sim = 0.00; args.min_lex_sim = 0.00
         args.semantic_light_gate = False
 
-    # Tiny cohorts: slightly ease thresholds.
     if N < 8:
         args.threshold = max(0.28, args.threshold - 0.02)
 
-    # embed superpass is conservative
     args.embed_superpass = 0.985
 
-# --------------------------- CLI / main ----------------------------------------
 def main() -> None:
     ap = argparse.ArgumentParser(
         description="Hybrid semantic+structural clone detection (FAISS) + fingerprint gate (v8.2)")
-    # Minimal knobs users need:
     ap.add_argument("--dir", required=True, help="Root directory to scan")
     ap.add_argument("--extensions", nargs="*", required=True, help="Extensions to include, e.g., .py .java .js .cpp")
     ap.add_argument("--mode", choices=["hybrid", "semantic", "semantic-plus", "structural"], default="hybrid",
                     help="Scoring mode (hybrid recommended; semantic-plus keeps a light FP gate)")
     ap.add_argument("--min-tokens", type=int, default=5, help="Primary knob (affects fingerprinting)")
-
-    # Expert / optional:
     ap.add_argument("--model", default="BAAI/bge-code-v1",
                     help="SentenceTransformer model (BGE-Code recommended)")
     ap.add_argument("--batch-size", type=int, default=16, help="Embedding batch size")
@@ -790,10 +765,8 @@ def main() -> None:
           f"topM={args.prefilter_topM}, threshold={args.threshold}, superpass={args.embed_superpass}, "
           f"short_token_gate={args.short_token_gate}, mutual_nearest={args.mutual_nearest}")
 
-    # Embeddings
     try:
         device = 'cuda' if torch.cuda.is_available() else 'cpu'
-        # trust_remote_code=True is critical for BGE-Code pooling
         model = SentenceTransformer(
             args.model,
             device=device,
@@ -806,9 +779,7 @@ def main() -> None:
         files, model, batch_size=args.batch_size,
         strip_comments=(not args.no_strip_comments)
     )
-    embed_np_raw = emb_t.detach().cpu().numpy().astype('float32')  # L2-normalized
-
-    # Center ONLY if safe and useful
+    embed_np_raw = emb_t.detach().cpu().numpy().astype('float32')
     use_center = (N >= 20)
     embed_np_centered = None
     if use_center:
@@ -820,11 +791,9 @@ def main() -> None:
         else:
             use_center = False
 
-    # Prefilter always uses RAW (more robust for tiny cohorts)
     prefilter_np = embed_np_raw
     embed_for_final = embed_np_centered if use_center else embed_np_raw
 
-    # Structural & fingerprints
     use_ast = (args.mode in ("hybrid", "structural")) and (not args.no_ast if hasattr(args, "no_ast") else True)
     use_lex = (args.mode in ("hybrid", "structural")) and (not args.no_lex if hasattr(args, "no_lex") else True)
     use_fp  = True
@@ -832,7 +801,6 @@ def main() -> None:
     if use_ast and not (_TS_AVAILABLE and _TS_LANGPACK):
         print("Note: tree-sitter / language pack not available; AST features limited to fallback.\n"
               "      Install: pip install 'tree-sitter>=0.25,<0.26' tree-sitter-language-pack", file=sys.stderr)
-        # keep use_ast True for vector shape consistency; structural vector_from_ast will be zeros if no parser
 
     ast_np, lex_np, tokens_by_file, fp_seq, fp_ctr, tok_counts = compute_structural_features(
         files,
@@ -844,12 +812,10 @@ def main() -> None:
     ast_active = use_ast and (ast_np.size > 0) and np.any(ast_np) and (args.w_ast > 0.0)
     lex_active = use_lex and (lex_np.size > 0) and np.any(lex_np) and (args.w_lex > 0.0)
 
-    # Effective weights
     w_e = float(args.w_embed if args.mode != "structural" else 0.0)
     w_a = float(args.w_ast) if ast_active else 0.0
     w_l = float(args.w_lex) if lex_active else 0.0
 
-    # Zero-out structures if inactive
     if not ast_active:
         ast_np = np.zeros((embed_np_raw.shape[0], 0), dtype=np.float32)
     if not lex_active:
@@ -860,7 +826,6 @@ def main() -> None:
     print(f"Features → embed:{embed_for_final.shape[1]}  ast:{ast_np.shape[1]}  lex:{lex_np.shape[1]}")
     print(f"Prefilter: topM={args.prefilter_topM} | Final threshold={args.threshold} | Short-token gate={args.short_token_gate} tokens")
 
-    # Prefilter neighbors (top-M)
     neigh_idx, _neigh_sim = prefilter_neighbors(prefilter_np, topM=args.prefilter_topM)
 
     pairs = compute_pairs_late(
@@ -889,8 +854,8 @@ def main() -> None:
 
     out_pairs = pairs[:args.topk] if args.topk and args.topk > 0 else pairs
     print(f"\nDetected {len(pairs)} candidate clone pairs (showing {len(out_pairs)}):\n")
+
     if args.debug_components:
-        # recompute components for reporting
         for p1, p2, sim in out_pairs:
             i = files.index(p1); j = files.index(p2)
             sim_e = float(np.dot(embed_for_final[i], embed_for_final[j]))
