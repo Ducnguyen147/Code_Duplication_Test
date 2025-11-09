@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-
 import argparse
 from pathlib import Path
 import pandas as pd
@@ -66,11 +65,12 @@ def main():
     parser.add_argument("--jscpd", type=str, default=None, help="Path to jscpd CSV")
     parser.add_argument("--emb", "--embeddings", dest="emb", type=str, default=None,
                         help="Path to embeddings algorithm CSV")
+    parser.add_argument("--language", type=str, default=None,
+                        help="Language label to show in the charts, e.g. 'Python'")
     parser.add_argument("--out-dir", type=str, default="/out", help="Output directory (default: /out)")
     args = parser.parse_args()
 
-    frames = []
-    tools = []
+    frames, tools = [], []
 
     if args.dolos:
         frames.append(read_tool_csv(args.dolos, "Dolos")); tools.append("Dolos")
@@ -91,6 +91,8 @@ def main():
     out_dir = Path(args.out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
 
+    lang_suffix = f" — {args.language}" if args.language else ""
+
     # ---------- Chart 1: Highest F1 per tool ----------
     best_rows = all_df.loc[all_df.groupby("tool")["f1"].idxmax()].copy()
     best_rows.sort_values("f1", ascending=False, inplace=True)
@@ -98,7 +100,7 @@ def main():
     fig1 = plt.figure(figsize=(8, 5))
     ax1 = fig1.add_subplot(111)
     bars = ax1.bar(best_rows["tool"], best_rows["f1"])
-    ax1.set_title("Highest F1 by Tool")
+    ax1.set_title("Highest F1 by Tool" + lang_suffix)
     ax1.set_xlabel("Tool")
     ax1.set_ylabel("F1")
 
@@ -133,10 +135,11 @@ def main():
                 fontsize=8,
             )
 
-    ax2.set_title("F1 vs Threshold (best parameter per threshold)")
+    ax2.set_title("F1 vs Threshold (best parameter per threshold)" + lang_suffix)
     ax2.set_xlabel("Threshold (%)")
     ax2.set_ylabel("F1")
     ax2.legend(loc="upper right")
+
     fig2.tight_layout()
     fig2.savefig(out_dir / "chart2_f1_vs_threshold.png", dpi=150)
 
