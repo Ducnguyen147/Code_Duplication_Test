@@ -1,0 +1,15 @@
+Found 27 files. Loading model 'BAAI/bge-code-v1' …
+[AUTO] mode=hybrid, min_tokens=5 → fp_k=5, fp_w=4, min_fp_sim=0.050, min_fp_total=4, min_fp_longest=1, topM=50, threshold=0.0, superpass=0.985, mutual_nearest=True
+Channels → embed:yes  ast:yes  lex:yes
+Weights  → w_e=1.0  w_ast=0.35  w_lex=0.1
+Features → embed:1536  ast:2048  lex:4096
+Prefilter: topM=50 | Final threshold=0.0 | Short-token gate=5 tokens
+No pairs met the similarity threshold 0.0
+
+
+# --- stderr ---
+
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]
+Loading checkpoint shards:  50%|█████     | 1/2 [00:00<00:00,  2.59it/s]
+Loading checkpoint shards: 100%|██████████| 2/2 [00:00<00:00,  4.53it/s]
+Loading checkpoint shards: 100%|██████████| 2/2 [00:00<00:00,  4.07it/s]

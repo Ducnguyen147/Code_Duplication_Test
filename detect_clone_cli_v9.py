@@ -1,24 +1,18 @@
 #!/usr/bin/env python3
 """
-Hybrid semantic + structural (AST / lexical) clone detection with FAISS + fingerprint gating (v8).
+Hybrid semantic + structural (AST / lexical) clone detection with FAISS + fingerprint gating (v8.2).
 
-What's new vs v7.1:
-- Correct pooling for BGE-Code via trust_remote_code=True (last-token pooling).
-- Strip comments/docstrings for Python before embedding (Type-1 robustness).
-- Length-weighted pooling of chunk embeddings.
-- Top-M FAISS prefilter (+ optional mutual-nearest pruning) instead of low fixed range.
-- New mode 'semantic-plus': semantic scoring that still uses a *light* fingerprint gate.
-- Keep STRICT short-file fingerprint hard gate; gate uses MOSS-style winnowing.
+What’s new vs v8.0:
+- Language-agnostic token streams via Tree-sitter AST serialization (works for Java/JS/C/C++).
+- Java-specific tokenizer + generic C-style fallback if AST parser is unavailable.
+- Short-file fingerprint hard gate is applied **only when both files have token streams**.
+- Strip C-style comments for Java/JS/C/C++ before embedding (Type-1 robustness).
+- Expose --short-token-gate (default=5).
 
-Background / references you can cite in the thesis:
-  - Winnowing local fingerprinting (MOSS) — Schleimer et al., SIGMOD’03.
-  - Tree-sitter tokenization + k-grams + metrics (similarity / total overlap / longest fragment)
-    as used in Dolos (language-agnostic plagiarism detection). :contentReference[oaicite:1]{index=1}
-  - Feature hashing for compact hashed vectors — Weinberger et al., 2009.
-  - FAISS cosine via L2-normalized dot product.
-
-CLI quickstart (see bottom of this file for more examples):
-  python3 detect_clone_cli_v8.py --dir /path/to/dir --extensions .py --mode semantic-plus --model BAAI/bge-code-v1
+Background / references (for your thesis):
+  - Winnowing local fingerprinting (MOSS) — Schleimer et al., SIGMOD’03 (guarantees ≥1 k-gram in substrings of length ≥ w+k−1). 
+  - Dolos (language-agnostic plagiarism detection): Tree-sitter → AST tokens → k-grams → winnowing; report similarity/total-overlap/longest fragment. 
+  - Sentence-Transformers pooling; BGE-Code via trust_remote_code=True (last-token pooling).
 """
 
 from __future__ import annotations
@@ -28,6 +22,7 @@ import hashlib
 import io
 import math
 import os
+import re
 import sys
 import tokenize
 import keyword
@@ -143,12 +138,21 @@ def strip_py_comments_and_docstrings(src: str) -> str:
         return src
     return "".join(out_tokens)
 
+def strip_c_style_comments(s: str) -> str:
+    if not s:
+        return ""
+    s = re.sub(r"/\*.*?\*/", "", s, flags=re.S)   # /* ... */
+    s = re.sub(r"//.*?$", "", s, flags=re.M)      # // ...
+    return s
+
 def normalize_for_embedding(path: str, text: str, strip_comments: bool = True) -> str:
     if not strip_comments or not text:
         return text or ""
-    if path.endswith(".py"):
+    p = path.lower()
+    if p.endswith(".py"):
         return strip_py_comments_and_docstrings(text)
-    # For non-Python, keep as-is (tree-sitter-based comment stripping could be added similarly)
+    if p.endswith((".java", ".c", ".h", ".hpp", ".cpp", ".cc", ".cxx", ".js", ".jsx", ".ts", ".tsx")):
+        return strip_c_style_comments(text)
     return text
 
 # --------------------------- Embeddings ----------------------------------------
@@ -208,13 +212,18 @@ def embed_files(
 
 # --------------------------- Structural features (AST) --------------------------
 _EXT_TO_LANG: Dict[str, str] = {
-    ".py": "python", ".js": "javascript", ".ts": "typescript", ".java": "java",
-    ".c": "c", ".cpp": "cpp", ".cc": "cpp", ".cxx": "cpp", ".cs": "c_sharp",
-    ".rb": "ruby", ".go": "go", ".php": "php", ".rs": "rust", ".kt": "kotlin", ".swift": "swift",
+    ".py": "python",
+    ".js": "javascript", ".jsx": "javascript", ".ts": "typescript", ".tsx": "tsx",
+    ".java": "java",
+    ".c": "c", ".h": "c",
+    ".cpp": "cpp", ".cc": "cpp", ".cxx": "cpp", ".hpp": "cpp",
+    ".cs": "c_sharp",
+    ".rb": "ruby", ".go": "go", ".php": "php", ".rs": "rust",
+    ".kt": "kotlin", ".swift": "swift",
 }
 
 def guess_ts_language_from_ext(path: str) -> Optional[str]:
-    _, ext = os.path.splitext(path)
+    _, ext = os.path.splitext(path.lower())
     return _EXT_TO_LANG.get(ext)
 
 def build_ts_parser(lang_name: str) -> Optional[Parser]:
@@ -300,6 +309,82 @@ def py_token_stream(src: str) -> List[str]:
     except Exception:
         pass
     return toks
+
+JAVA_KEYWORDS = {
+    "abstract","assert","boolean","break","byte","case","catch","char","class","const",
+    "continue","default","do","double","else","enum","extends","final","finally","float",
+    "for","goto","if","implements","import","instanceof","int","interface","long","native",
+    "new","package","private","protected","public","return","short","static","strictfp",
+    "super","switch","synchronized","this","throw","throws","transient","try","void",
+    "volatile","while","var","record","sealed","permits","non-sealed"
+}
+
+def java_token_stream(src: str) -> List[str]:
+    """Lexer-level tokenization for Java; normalize IDs/NUM/STR; drop comments."""
+    if not src: return []
+    s = strip_c_style_comments(src)
+    s = re.sub(r'"([^"\\]|\\.)*"', 'STR', s)              # strings
+    s = re.sub(r"'(\\.|.)'", 'CHR', s)                    # char literal
+    s = re.sub(r"\b\d[0-9_]*([.][0-9_]+)?([eE][+-]?\d+)?[fFdDlL]?\b", "NUM", s)
+    pattern = r"[A-Za-z_]\w*|==|!=|<=|>=|&&|\|\||<<|>>|>>>|::|[{}()\[\];,.\+\-\*/%<>=!&|^~?:]"
+    toks: List[str] = []
+    for m in re.finditer(pattern, s):
+        t = m.group(0)
+        if t[0].isalpha() or t[0] == "_":
+            toks.append(t if t in JAVA_KEYWORDS else "ID")
+        else:
+            toks.append(t)
+    return toks
+
+def c_like_fallback_token_stream(src: str) -> List[str]:
+    """Generic fallback for C/C++/JS-like languages when AST parser isn't available."""
+    if not src: return []
+    s = strip_c_style_comments(src)
+    s = re.sub(r'"([^"\\]|\\.)*"', 'STR', s)
+    s = re.sub(r"'(\\.|.)'", 'CHR', s)
+    s = re.sub(r"\b\d[0-9_]*([.][0-9_]+)?([eE][+-]?\d+)?[fFdDlL]?\b", "NUM", s)
+    pattern = r"[A-Za-z_]\w*|==|!=|<=|>=|&&|\|\||<<|>>|>>>|::|[{}()\[\];,.\+\-\*/%<>=!&|^~?:]"
+    toks: List[str] = []
+    for m in re.finditer(pattern, s):
+        t = m.group(0)
+        if t[0].isalpha() or t[0] == "_":
+            toks.append("ID")
+        else:
+            toks.append(t)
+    return toks
+
+def ts_token_stream(code: str, parser: Optional[Parser], lang_name: str = "lang") -> List[str]:
+    """
+    Language-agnostic AST serialization via Tree-sitter node types.
+    Map identifiers/literals to ID/NUM/STR, drop comments.
+    """
+    if not parser or not code: return []
+    try:
+        tree = parser.parse(code.encode("utf-8"))
+        root = tree.root_node  # type: ignore
+    except Exception:
+        return []
+    out: List[str] = []
+    stack = [root]
+    while stack:
+        n = stack.pop()
+        t = getattr(n, "type", "")
+        # Skip comments
+        if "comment" in t:
+            continue
+        # Coarsen common lexical categories
+        lt = t.lower()
+        if "string" in lt: out.append("STR"); continue
+        if "char" in lt and "literal" in lt: out.append("CHR"); continue
+        if any(x in lt for x in ("number", "integer", "float", "decimal")): out.append("NUM"); continue
+        if t in ("identifier", "scoped_identifier", "type_identifier"): out.append("ID"); continue
+        out.append(f"{lang_name}:{t}")
+        try:
+            for ch in n.children:
+                stack.append(ch)
+        except Exception:
+            pass
+    return out
 
 def token_ngram_vector(tokens: List[str], n: int, dim: int) -> np.ndarray:
     vec = np.zeros(dim, dtype=np.float32)
@@ -396,7 +481,7 @@ def compute_structural_features(
     lex_dim: int,
     lex_n: int,
     use_lex: bool,
-    lex_mode: str,   # 'char' or 'py-token'
+    lex_mode: str,   # 'token' or 'char'
     fp_k: int,
     fp_w: int,
     use_fp: bool,
@@ -420,6 +505,7 @@ def compute_structural_features(
     ast_rows, lex_rows = [], []
     for path in file_paths:
         text = read_text(path)
+        p_lower = path.lower()
 
         # AST
         if use_ast and parser_cache:
@@ -428,16 +514,30 @@ def compute_structural_features(
             ast_vec = structural_vector_from_ast(text, parser, ast_dim) if parser else np.zeros(ast_dim, np.float32)
             ast_rows.append(ast_vec)
 
-        # tokens for Python (lex vec + fingerprints)
+        # --- Token streams (for lex + fingerprints) ---
         toks: List[str] = []
-        if path.endswith(".py"):
+        lang_name = guess_ts_language_from_ext(path)
+        parser = parser_cache.get(lang_name) if (parser_cache and lang_name in parser_cache) else None
+
+        if p_lower.endswith(".py"):
             toks = py_token_stream(text)
+        elif p_lower.endswith(".java"):
+            toks = java_token_stream(text)
+        elif p_lower.endswith((".js", ".jsx", ".ts", ".tsx", ".c", ".h", ".hpp", ".cc", ".cxx", ".cpp")):
+            if parser is not None:
+                toks = ts_token_stream(text, parser, lang_name or "lang")
+            else:
+                toks = c_like_fallback_token_stream(text)
+        else:
+            if parser is not None:
+                toks = ts_token_stream(text, parser, lang_name or "lang")
+
         tokens_by_file.append(toks)
         tok_counts.append(len(toks))
 
         # Lex vec
         if use_lex:
-            if lex_mode == "py-token" and toks:
+            if lex_mode in ("token", "py-token") and toks:
                 lex_rows.append(token_ngram_vector(toks, lex_n, lex_dim))
             else:
                 s = text if text else ""
@@ -567,8 +667,10 @@ def compute_pairs_late(
             fpT = total_overlap(fp_ctr[i], fp_ctr[j]) if fp_ctr else 0
             fpL = longest_common_run(fp_seq[i], fp_seq[j]) if fp_seq else 0
 
-            # short-file hard gate
-            if token_counts is not None and (token_counts[i] < short_token_gate or token_counts[j] < short_token_gate):
+            # short-file hard gate — apply ONLY if both token streams exist
+            has_tokens = token_counts is not None and (token_counts[i] > 0 and token_counts[j] > 0)
+            is_short = has_tokens and (token_counts[i] < short_token_gate or token_counts[j] < short_token_gate)
+            if is_short:
                 if not (fpS >= min_fp_sim and fpT >= min_fp_total and fpL >= min_fp_longest):
                     if sim_e < embed_superpass:  # allow extreme semantic superpass
                         continue
@@ -619,14 +721,14 @@ def _auto_profile(args, N: int):
     args.no_ast  = False
     args.no_lex  = False
     args.no_fp   = False
-    args.lex_mode = "py-token"
+    args.lex_mode = "token"
     args.lex_n    = 3
     args.ast_dim  = 2048
     args.lex_dim  = 4096
     args.ast_tfidf = True
 
     # --- thresholds ---
-    args.prefilter_topM = max(5, int(args.prefilter_topM))  # enforce sane minimum
+    args.prefilter_topM = max(5, int(args.prefilter_topM))  # sane minimum
 
     # final threshold by mode
     if args.mode == "semantic":
@@ -660,10 +762,10 @@ def _auto_profile(args, N: int):
 # --------------------------- CLI / main ----------------------------------------
 def main() -> None:
     ap = argparse.ArgumentParser(
-        description="Hybrid semantic+structural clone detection (FAISS) + fingerprint gate (v8)")
+        description="Hybrid semantic+structural clone detection (FAISS) + fingerprint gate (v8.2)")
     # Minimal knobs users need:
     ap.add_argument("--dir", required=True, help="Root directory to scan")
-    ap.add_argument("--extensions", nargs="*", required=True, help="Extensions to include, e.g., .py .java")
+    ap.add_argument("--extensions", nargs="*", required=True, help="Extensions to include, e.g., .py .java .js .cpp")
     ap.add_argument("--mode", choices=["hybrid", "semantic", "semantic-plus", "structural"], default="hybrid",
                     help="Scoring mode (hybrid recommended; semantic-plus keeps a light FP gate)")
     ap.add_argument("--min-tokens", type=int, default=5, help="Primary knob (affects fingerprinting)")
@@ -680,6 +782,8 @@ def main() -> None:
     ap.add_argument("--no-strip-comments", action="store_true",
                     help="Do NOT strip comments/docstrings before embedding (default is to strip)")
     ap.add_argument("--threshold", type=float, default=None, help="Override final similarity threshold")
+    ap.add_argument("--short-token-gate", type=int, default=5,
+                    help="Short-token hard gate (tokens per file). Only applied when both files have tokens.")
 
     args = ap.parse_args()
 
@@ -705,7 +809,7 @@ def main() -> None:
           f"fp_k={args.fp_k}, fp_w={args.fp_w}, min_fp_sim={args.min_fp_sim:.3f}, "
           f"min_fp_total={args.min_fp_total}, min_fp_longest={args.min_fp_longest}, "
           f"topM={args.prefilter_topM}, threshold={args.threshold}, superpass={args.embed_superpass}, "
-          f"mutual_nearest={args.mutual_nearest}")
+          f"short_token_gate={args.short_token_gate}, mutual_nearest={args.mutual_nearest}")
 
     # Embeddings
     try:
@@ -747,14 +851,14 @@ def main() -> None:
     use_fp  = True
 
     if use_ast and not (_TS_AVAILABLE and _TS_LANGPACK):
-        print("Note: tree-sitter / language pack not available; AST features disabled.\n"
+        print("Note: tree-sitter / language pack not available; AST features limited to fallback.\n"
               "      Install: pip install 'tree-sitter>=0.25,<0.26' tree-sitter-language-pack", file=sys.stderr)
-        use_ast = False
+        # keep use_ast True for vector shape consistency; structural vector_from_ast will be zeros if no parser
 
     ast_np, lex_np, tokens_by_file, fp_seq, fp_ctr, tok_counts = compute_structural_features(
         files,
         ast_dim=2048, use_ast=use_ast, ast_tfidf=True, ast_stop_topk=0,
-        lex_dim=4096, lex_n=3, use_lex=use_lex, lex_mode="py-token",
+        lex_dim=4096, lex_n=3, use_lex=use_lex, lex_mode="token",
         fp_k=args.fp_k, fp_w=args.fp_w, use_fp=use_fp,
     )
 
@@ -775,7 +879,7 @@ def main() -> None:
     print(f"Channels → embed:{'yes' if w_e>0 else 'no'}  ast:{'yes' if ast_active else 'no'}  lex:{'yes' if lex_active else 'no'}")
     print(f"Weights  → w_e={w_e}  w_ast={w_a}  w_lex={w_l}")
     print(f"Features → embed:{embed_for_final.shape[1]}  ast:{ast_np.shape[1]}  lex:{lex_np.shape[1]}")
-    print(f"Prefilter: topM={args.prefilter_topM} | Final threshold={args.threshold} | Short-token gate={5} tokens")
+    print(f"Prefilter: topM={args.prefilter_topM} | Final threshold={args.threshold} | Short-token gate={args.short_token_gate} tokens")
 
     # Prefilter neighbors (top-M)
     neigh_idx, _neigh_sim = prefilter_neighbors(prefilter_np, topM=args.prefilter_topM)
@@ -795,7 +899,7 @@ def main() -> None:
         mutual_nearest=args.mutual_nearest,
         structure_positive_only=True,
         embed_superpass=args.embed_superpass,
-        short_token_gate=5,
+        short_token_gate=args.short_token_gate,
         token_counts=tok_counts,
         semantic_light_gate=(args.mode == "semantic-plus"),
     )
