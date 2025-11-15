@@ -1,20 +1,5 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""
-detect_clone_cli.py
-
-Hybrid semantic + structural + fingerprint clone detection (FAISS) with explicit k/w sensitivity.
-
-Key behaviour for (k,w) sensitivity
------------------------------------
-- Fingerprints are built over token streams, winnowed with window size w.
-- Fingerprint similarity FEEDS the final score by default (use_fp_in_score = True).
-- Changing (k,w) changes selected fingerprints -> changes fp similarity -> changes final score.
-
-References
-----------
-Winnowing (Schleimer et al., SIGMOD'03) and Dolos defaults (k=23, w=17). See README. 
-"""
 
 from __future__ import annotations
 
@@ -291,7 +276,7 @@ def py_token_stream(src: str) -> List[str]:
             val = tok.string
             if tt in (tokenize.NL, tokenize.NEWLINE, tokenize.INDENT, tokenize.DEDENT, tokenize.COMMENT):
                 continue
-            if tt == tokenize.STRING:      # drop string literals entirely
+            if tt == tokenize.STRING:
                 continue
             if tt == tokenize.NUMBER:
                 toks.append("NUM"); continue
@@ -505,14 +490,12 @@ def compute_structural_features(
         text = read_text(path)
         p_lower = path.lower()
 
-        # AST
         if use_ast and parser_cache:
             lang_name = guess_ts_language_from_ext(path)
             parser = parser_cache.get(lang_name) if (lang_name in parser_cache) else None
             ast_vec = structural_vector_from_ast(text, parser, ast_dim) if parser else np.zeros(ast_dim, np.float32)
             ast_rows.append(ast_vec)
 
-        # Tokens
         toks: List[str] = []
         lang_name = guess_ts_language_from_ext(path)
         parser = parser_cache.get(lang_name) if (parser_cache and lang_name in parser_cache) else None
@@ -530,7 +513,6 @@ def compute_structural_features(
         tokens_by_file.append(toks)
         tok_counts.append(len(toks))
 
-        # Lex grams (optional)
         if use_lex:
             if lex_mode in ("token", "py-token") and toks:
                 lex_rows.append(token_ngram_vector(toks, lex_n, lex_dim))
@@ -545,7 +527,6 @@ def compute_structural_features(
                         vec[_stable_bucket(f"g:{key}", lex_dim)] += 1.0
                     lex_rows.append(vec)
 
-        # Fingerprints
         if use_fp and toks:
             seq, ctr = fp_sequence(toks, fp_k, fp_w)
             fp_seq_by_file.append(seq)
@@ -570,7 +551,7 @@ def build_faiss_index_np(mat: np.ndarray) -> 'faiss.Index':
     if faiss is None:
         raise RuntimeError("faiss-cpu is required. pip install faiss-cpu")
     dim = mat.shape[1]
-    index = faiss.IndexFlatIP(dim)  # inner product == cosine on L2-normalized embeddings
+    index = faiss.IndexFlatIP(dim)
     index.add(mat.astype('float32', copy=False))
     return index
 
@@ -613,13 +594,11 @@ def compute_pairs_late(
     final_threshold: float,
     min_ast_sim: float,
     min_lex_sim: float,
-    # fingerprint artifacts for gating
     fp_seq: List[List[int]],
     fp_ctr: List[Counter],
     min_fp_sim: float,
     min_fp_total: int,
     min_fp_longest: int,
-    # neighbor graph from prefilter
     neigh_idx: List[List[int]],
     mutual_nearest: bool,
     structure_positive_only: bool = True,
@@ -646,7 +625,6 @@ def compute_pairs_late(
             if mutual_nearest and i not in neigh_sets[j]:
                 continue
 
-            # channels
             sim_e = float(np.dot(embed_np_final[i], embed_np_final[j]))
             num, den = w_embed * sim_e, w_embed
 
@@ -655,12 +633,10 @@ def compute_pairs_late(
             if structure_positive_only:
                 sim_a = max(sim_a, 0.0); sim_l = max(sim_l, 0.0)
 
-            # fingerprints for gates
             fpS = jaccard_from_counters(fp_ctr[i], fp_ctr[j]) if fp_ctr else 0.0
             fpT = total_overlap(fp_ctr[i], fp_ctr[j]) if fp_ctr else 0
             fpL = longest_common_run(fp_seq[i], fp_seq[j]) if fp_seq else 0
 
-            # short-token hard gate
             has_tokens = token_counts is not None and (token_counts[i] > 0 and token_counts[j] > 0)
             is_short = has_tokens and (token_counts[i] < short_token_gate or token_counts[j] < short_token_gate)
             if is_short:
@@ -668,7 +644,6 @@ def compute_pairs_late(
                     if sim_e < embed_superpass:
                         continue
 
-            # primary gate
             gate_fail = True
             if ast_active and sim_a >= min_ast_sim: gate_fail = False
             if lex_active and sim_l >= min_lex_sim: gate_fail = False
@@ -681,7 +656,6 @@ def compute_pairs_late(
             if gate_fail:
                 continue
 
-            # weighted score   s = (w_e*e + w_a*ast + w_l*lex + w_fp*fp) / (w_e + w_a + w_l + w_fp)
             if ast_active: num += w_ast * sim_a; den += w_ast
             if lex_active: num += w_lex * sim_l; den += w_lex
             if fp_active:
@@ -700,23 +674,19 @@ def compute_pairs_late(
 def _auto_profile(args, N: int):
     mt = max(2, int(args.min_tokens))
 
-    # Sensitivity mapping (if explicit fp_k/fp_w not provided)
     if args.fp_k is None:
         args.fp_k = max(3, min(64, mt))
     if args.fp_w is None:
         args.fp_w = max(1, min(args.fp_k - 1, int(round(0.75 * args.fp_k))))
 
-    # Gates scale with k
     args.min_fp_total   = max(2, int(round(0.4 * args.fp_k)))
     args.min_fp_longest = max(1, int(round(0.25 * args.fp_k)))
     args.min_fp_sim     = 0.05 + 0.005 * max(0, args.fp_k - 5)
 
-    # Base weights
     args.w_embed = 1.0
     args.w_ast   = 0.35
     args.w_lex   = 0.10
 
-    # Fingerprint channel default: ON
     args.w_fp = float(args.fp_weight) if args.use_fp_in_score else 0.0
 
     args.no_ast  = False
@@ -746,7 +716,7 @@ def _auto_profile(args, N: int):
         args.no_ast = False; args.no_lex = False
         args.min_ast_sim = 0.03; args.min_lex_sim = 0.03
         args.semantic_light_gate = False
-    else:  # hybrid
+    else:
         args.threshold = 0.32 if getattr(args, "threshold", None) is None else args.threshold
         args.min_ast_sim = 0.00; args.min_lex_sim = 0.00
         args.semantic_light_gate = False
@@ -767,7 +737,6 @@ def main() -> None:
     ap.add_argument("--fp-k", type=int, default=None, help="Fingerprint k-gram length (overrides --min-tokens mapping)")
     ap.add_argument("--fp-w", type=int, default=None, help="Winnowing window size (overrides default w≈0.75k)")
 
-    # ON by default so (k,w) impact score without extra flags
     ap.add_argument("--use-fp-in-score", dest="use_fp_in_score", action="store_true",
                     help="Include fingerprint similarity in the final score")
     ap.add_argument("--no-fp-in-score", dest="use_fp_in_score", action="store_false",
@@ -820,18 +789,15 @@ def main() -> None:
           f"use_fp_in_score={args.use_fp_in_score}, w_fp={args.fp_weight}, fp_sim_mode={args.fp_sim_mode}, "
           f"prefilter={args.prefilter}")
 
-    # Load model
     try:
         device = 'cuda' if torch.cuda.is_available() else 'cpu'
         model = SentenceTransformer(args.model, device=device, trust_remote_code=True)
     except Exception as exc:
         print(f"Error loading model {args.model}: {exc}", file=sys.stderr); sys.exit(1)
 
-    # Embeddings
     emb_t = embed_files(files, model, batch_size=args.batch_size, strip_comments=(not args.no_strip_comments))
     embed_np_raw = emb_t.detach().cpu().numpy().astype('float32')
 
-    # Optional centering
     use_center = (N >= 20)
     embed_np_centered = None
     if use_center:
@@ -845,7 +811,6 @@ def main() -> None:
     prefilter_np = embed_np_raw
     embed_for_final = embed_np_centered if use_center else embed_np_raw
 
-    # Channels
     use_ast = (args.mode in ("hybrid", "structural")) and (not getattr(args, "no_ast", False))
     use_lex = (args.mode in ("hybrid", "structural")) and (not getattr(args, "no_lex", False))
     use_fp  = True
@@ -879,7 +844,6 @@ def main() -> None:
     print(f"Features → embed:{embed_for_final.shape[1]}  ast:{ast_np.shape[1]}  lex:{lex_np.shape[1]}  k={args.fp_k} w={args.fp_w}")
     print(f"Prefilter: mode={args.prefilter} topM={args.prefilter_topM} | Final threshold={args.threshold} | Short-token gate={args.short_token_gate} tokens")
 
-    # Build neighbor lists
     if args.prefilter == "embed":
         neigh_idx, _ = prefilter_neighbors(prefilter_np, topM=args.prefilter_topM)
     else:
