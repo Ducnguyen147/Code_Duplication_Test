@@ -99,6 +99,7 @@ def main():
             rc, dolos_out, dolos_err = run_dolos(args.language, args.zip, k, w)
             if rc != 0:
                 print(f"[!] Dolos failed for k={k} w={w}:\n{dolos_err}", file=sys.stderr)
+
                 for t in thresholds:
                     rows.append([args.language, k, w, t, "", "", "", "", "", ""])
                 continue
