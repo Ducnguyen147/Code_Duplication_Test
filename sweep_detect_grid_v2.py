@@ -1,11 +1,4 @@
 #!/usr/bin/env python3
-"""
-Sweep detect_clone_cli.py over (k,w) and thresholds; APPEND each metrics row immediately.
-
-CSV schema
-----------
-language,k,w,threshold_pct,tp,fp,fn,precision,recall,f1,raw_pairs_txt
-"""
 
 from __future__ import annotations
 import argparse, csv, os, re, subprocess, sys
@@ -118,7 +111,7 @@ def evaluate_threshold(
     for a,b in pred_set:
         ga, gb = g(a), g(b)
         if ga is None or gb is None: 
-            continue   # ignore unclassified in FP/TN accounting
+            continue
         if ga == gb: tp += 1
         else:        fp += 1
 
@@ -196,7 +189,6 @@ def main():
                 mutual_nearest=args.mutual_nearest, extra_args=args.extra_args,
             )
 
-            # Persist raw detector output
             try:
                 with open(txt_path, "w", encoding="utf-8") as t:
                     t.write(out)

@@ -1,34 +1,5 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""
-plot_f1_summaries.py
-
-Generates figures from one or more tool CSVs:
-  1) chart1_highest_f1_per_tool.png
-  2) chart2_f1_vs_threshold.png           <-- every point is annotated with parameters
-  3) chart3_param_influence_by_tool.png   <-- single-parameter tools
-  4) chart3b_dolos_kw_heatmap.png         <-- (k, w) heatmap if Dolos is present
-
-CSV expectations per tool (columns used by this script):
-- Dolos:        k, w, threshold_pct, f1
-- JPlag:        t, threshold_pct, f1
-- PMD-CPD:      min_tokens, threshold_pct, f1
-- jscpd:        min_tokens (alias: minTokens), threshold_pct, f1
-- Embeddings:   EITHER k, w, threshold_pct, f1   <-- supported (hybrid sweep)
-                 OR   min_tokens, threshold_pct, f1
-
-If a column 'param_label' is already present, it's used; otherwise we synthesize one.
-
-Example:
-  python plot_f1_summaries.py \
-    --dolos results_dolos.csv \
-    --jplag results_jplag.csv \
-    --pmd-cpd results_pmd.csv \
-    --jscpd results_jscpd.csv \
-    --emb results_emb.csv \
-    --language "Java" \
-    --out-dir ./out
-"""
 
 from __future__ import annotations
 
@@ -64,15 +35,12 @@ def read_tool_csv(path: str, tool: str) -> pd.DataFrame:
     df = pd.read_csv(path)
     df["tool"] = tool
 
-    # Normalize possible aliases
     if "minTokens" in df.columns and "min_tokens" not in df.columns:
         df["min_tokens"] = df["minTokens"]
 
-    # Make sure relevant numeric columns are numeric
     for c in ("threshold_pct", "f1", "k", "w", "t", "min_tokens"):
         _to_num(df, c)
 
-    # Synthesize a param_label when needed (tool-specific)
     if tool == "Dolos":
         required = {"k", "w"}
         if not required.issubset(df.columns):
@@ -94,7 +62,6 @@ def read_tool_csv(path: str, tool: str) -> pd.DataFrame:
             df["param_label"] = df.apply(lambda r: f"--min-tokens={int(r['min_tokens'])}", axis=1)
 
     elif tool == "Embeddings":
-        # NEW: prefer (k,w) if present, else min_tokens, else blank
         if "param_label" not in df.columns or df["param_label"].isna().all():
             has_kw = {"k", "w"}.issubset(df.columns) and df[["k", "w"]].notna().all(axis=1).any()
             if has_kw:
@@ -141,7 +108,6 @@ def get_param_cols(tool: str, df: pd.DataFrame) -> List[str]:
         "JPlag": ["t"],
         "PMD-CPD": ["min_tokens"],
         "jscpd": ["min_tokens"],
-        # Embeddings: show min_tokens curve *if* present; (k,w) is handled via heatmap-like view or the annotations.
         "Embeddings": ["min_tokens"] if "min_tokens" in df.columns else [],
     }
     return [c for c in mapping.get(tool, []) if c in df.columns]
@@ -226,8 +192,6 @@ def main():
         best = best_per_threshold(tdf)
         ax2.plot(best["threshold_pct"], best["f1"], marker="o", label=tool)
 
-        # Annotate each point with the chosen parameter setting at that threshold.
-        # For Embeddings, this now shows (k,w) when present in the CSV.
         for _, r in best.iterrows():
             raw = str(r.get("param_label", "") or "").strip()
             label = raw if raw else _format_params_from_row(r)
@@ -279,7 +243,6 @@ def main():
             ax.set_xlabel(PARAM_LABELS.get(pcol, pcol))
             ax.set_ylabel("F1")
 
-        # Hide any leftover empty axes
         for ax in axes[len(single_param_tools):]:
             ax.axis("off")
 
@@ -305,7 +268,6 @@ def main():
                 axH.set_ylabel(PARAM_LABELS["k"])
                 axH.set_title("Dolos: Max F1 per (k, w)" + lang_suffix)
 
-                # Annotate cells with F1 values
                 for i, k in enumerate(pivot.index):
                     for j, w in enumerate(pivot.columns):
                         val = pivot.loc[k, w]
