@@ -1,6 +1,0 @@
-tool,best_f1,best_threshold_pct,param_label_at_best
-Embeddings,1.0,50.0,min_tokens=5
-Dolos,0.8571,50.0,"(k=23,w=25)"
-JPlag,0.8,50.0,-t=5
-PMD-CPD,0.6909,50.0,--min-tokens=5
-jscpd,0.6415,50.0,--min-tokens=5
