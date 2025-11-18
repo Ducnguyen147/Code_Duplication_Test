@@ -42,11 +42,9 @@ def read_tool_csv(path: str, tool: str) -> pd.DataFrame:
     df = pd.read_csv(path)
     df["tool"] = tool
 
-    # Map aliases used by some tools
     if "minTokens" in df.columns and "min_tokens" not in df.columns:
         df["min_tokens"] = df["minTokens"]
 
-    # Parse common numeric columns if present
     for c in ("threshold_pct", "f1", "k", "w", "t", "min_tokens"):
         _to_num(df, c)
 
@@ -65,7 +63,6 @@ def read_tool_csv(path: str, tool: str) -> pd.DataFrame:
             raise ValueError(f"{tool} CSV missing column: 'min_tokens'")
 
     elif tool == "Embeddings":
-        # Prefer (k,w) if present (hybrid sweeps), else min_tokens if present.
         pass
 
     return df
@@ -101,7 +98,7 @@ def get_param_cols(tool: str, df: pd.DataFrame) -> List[str]:
         "PMD-CPD": ["min_tokens"],
         "jscpd": ["min_tokens"],
         "Embeddings": ["min_tokens"] if "min_tokens" in df.columns else [],
-        "Dolos": ["k", "w"],  # covered above
+        "Dolos": ["k", "w"],
     }
     return [c for c in mapping.get(tool, []) if c in df.columns]
 
@@ -128,11 +125,9 @@ def spread_per_threshold(
         q75=lambda s: filt(s).quantile(0.75),
     ).reset_index().sort_values("threshold_pct")
 
-    # Ensure arrays are float and keep NaNs where groups had no positive f1.
     for c in ("f1_min", "f1_max", "q25", "q75"):
         stats[c] = pd.to_numeric(stats[c], errors="coerce")
 
-    # Choose which pair to use for the band
     if use_iqr:
         stats["y1"] = stats["q25"]
         stats["y2"] = stats["q75"]
@@ -151,7 +146,6 @@ def _draw_band(ax, x, y1, y2, color, alpha: float, outline: bool) -> None:
     y1 = np.asarray(y1, dtype=float)
     y2 = np.asarray(y2, dtype=float)
 
-    # Clamp order and build a valid mask
     ylo = np.minimum(y1, y2)
     yhi = np.maximum(y1, y2)
     mask = ~(np.isnan(ylo) | np.isnan(yhi))
@@ -184,7 +178,6 @@ def main():
                         help="Language label to show in the charts, e.g. 'Java'")
     parser.add_argument("--out-dir", type=str, default="/out", help="Output directory (default: /out)")
 
-    # Chart 2 controls
     parser.add_argument("--spread", choices=["minmax", "iqr"], default="minmax",
                         help="Band on Chart 2: 'minmax' span or interquartile range 'iqr'.")
     parser.add_argument("--spread-alpha", type=float, default=0.18,
@@ -194,7 +187,6 @@ def main():
     parser.add_argument("--chart2-layout", choices=["overlay", "facet"], default="facet",
                         help="Overlay all tools on one axis, or facet into small multiples (default: facet).")
 
-    # New: control how zeros are treated in the band
     parser.add_argument("--include-zero-f1-in-band", action="store_true",
                         help="Include 0.0 F1 values when computing the sweep band (default: excluded).")
 
@@ -251,7 +243,6 @@ def main():
     use_iqr = (args.spread == "iqr")
 
     if args.chart2_layout == "facet":
-        # Small multiples layout to avoid overlapping bands
         n = len(tools_available)
         ncols = 2 if n > 1 else 1
         if n >= 4: ncols = 3
@@ -261,7 +252,6 @@ def main():
             axes = np.array([axes])
         axes = axes.flatten()
 
-        # Precompute stats + best and figure out robust global y-lims (ignore NaNs)
         stats_per_tool: Dict[str, pd.DataFrame] = {}
         best_per_tool: Dict[str, pd.DataFrame] = {}
         ymins, ymaxs = [], []
@@ -274,7 +264,6 @@ def main():
             ymins.append(np.nanmin(stats["y1"].values))
             ymaxs.append(np.nanmax(stats["y2"].values))
 
-        # Fallback if everything was NaN (unlikely but safe)
         global_min = float(np.nanmin(ymins)) if np.isfinite(np.nanmin(ymins)) else 0.0
         global_max = float(np.nanmax(ymaxs)) if np.isfinite(np.nanmax(ymaxs)) else 1.0
         global_min = max(0.0, global_min - 0.02)
@@ -284,7 +273,6 @@ def main():
             stats = stats_per_tool[tool]
             x = stats["threshold_pct"].values.astype(float)
 
-            # get a color from the cycle by plotting a hidden line
             dummy_line, = ax.plot(x, stats["y2"].values, alpha=0.0)
             color = dummy_line.get_color()
             dummy_line.remove()
@@ -295,7 +283,6 @@ def main():
             best = best_per_tool[tool]
             ax.plot(best["threshold_pct"], best["f1"], marker="o", label=tool, zorder=3, linewidth=2.0, color=color)
 
-            # annotate best configuration at each threshold (short labels)
             for _, r in best.iterrows():
                 label = _format_params_from_row(r)
                 if label:
@@ -313,7 +300,6 @@ def main():
             ax.set_xlabel("Threshold (%)")
             ax.set_ylabel("F1")
 
-        # hide extra axes if any
         for ax in axes[len(tools_available):]:
             ax.axis("off")
 
@@ -322,11 +308,9 @@ def main():
         fig2.savefig(out_dir / "chart2_f1_vs_threshold_facet.png", dpi=150)
 
     else:
-        # Overlay layout (all tools on a single axis)
         fig2 = plt.figure(figsize=(10, 7))
         ax2 = fig2.add_subplot(111)
 
-        # Precompute global y-lims robustly (ignore NaNs)
         ymins, ymaxs = [], []
         pertool_stats: Dict[str, pd.DataFrame] = {}
         for tool in tools_available:
