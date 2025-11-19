@@ -434,7 +434,7 @@ def fp_similarity(i: int, j: int, seq: List[List[int]], ctr: List[Counter], mode
     elif mode == "longest":
         l = longest_common_run(seq[i], seq[j]); m = min(len(seq[i]), len(seq[j]))
         return (l / m) if m > 0 else 0.0
-    else:  # combo
+    else:
         jacc = jaccard_from_counters(ctr[i], ctr[j])
         l = longest_common_run(seq[i], seq[j]); m = min(len(seq[i]), len(seq[j])); l_norm = (l / m) if m > 0 else 0.0
         return 0.7 * jacc + 0.3 * l_norm

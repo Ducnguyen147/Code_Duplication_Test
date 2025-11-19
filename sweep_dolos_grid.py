@@ -64,7 +64,6 @@ def run_filter_on_stdout(
         f1 = float(m_scores.group(3))
         return tp, fp, fn, precision, recall, f1, out
     else:
-        # return Nones to signal parse failure; include combined stdout+stderr for debugging
         return None, None, None, None, None, None, out + ("\n--- stderr ---\n" + err if err else "")
 
 def main():
