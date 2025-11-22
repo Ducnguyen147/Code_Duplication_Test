@@ -3,3 +3,4 @@ venv
 dolos-report-*/
 report/
 result-*/
+__pycache__
