@@ -19,16 +19,6 @@ authors:
     given-names: "Tibor"
     affiliation: "External Supervisor"
 url: "https://github.com/Ducnguyen147/Code_Duplication_Test"
-abstract: |
-  This repository contains the synthetic benchmark corpus and scripts used in the master
-  thesis *“A Comparative Study of Multi‑Language Code‑Clone Detectors and a Hybrid
-  Transformer‑Based Semantic Approach”*.  It includes a four‑language artificial “mix”
-  dataset (Python, Java, JavaScript, C++), wrappers around several open‑source clone
-  detectors (Dolos, JPlag, PMD‑CPD, jscpd) and a custom hybrid semantic detector, as
-  well as parameter‑sweep scripts and analysis notebooks for reproducing the thesis
-  results.  Please cite this repository alongside the associated thesis or paper if
-  you reuse the dataset or code in your own work.
-repository-code: "Code_Duplication_Test"
 preferred-citation:
   type: article
   title: "A Comparative Study of Multi‑Language Code‑Clone Detectors and a Hybrid
