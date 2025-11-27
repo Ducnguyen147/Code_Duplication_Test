@@ -1,37 +1,28 @@
 cff-version: 1.2.0
 message: "If you use this software or dataset, please cite it as below."
+authors:
+  - family-names: "Nguyen"
+    given-names: "Anh Duc"
+    # orcid: "https://orcid.org/XXXX-XXXX-XXXX-XXXX"
 title: "Code_Duplication_Test: evaluation corpus and scripts for multi‑language code‑clone detection"
 version: 1.0.0
 doi: 10.5281/zenodo.17743015 
 date-released: "2025-11-27"
-authors:
-  - family-names: "Nguyen"
-    given-names: "Anh Duc"
-    affiliation: "Eötvös Loránd University, Faculty of Informatics"
-    # orcid: "https://orcid.org/XXXX-XXXX-XXXX-XXXX"
-  - family-names: "Erdei"
-    given-names: "Zsófia"
-    affiliation: "Eötvös Loránd University, Dept. of Software Technology and Methodology"
-  - family-names: "Alwaháb"
-    given-names: "Zoltán"
-    affiliation: "Eötvös Loránd University, Dept. of Software Technology and Methodology"
-  - family-names: "Brunner"
-    given-names: "Tibor"
-    affiliation: "External Supervisor"
 url: "https://github.com/Ducnguyen147/Code_Duplication_Test"
 preferred-citation:
   type: article
-  title: "A Comparative Study of Multi‑Language Code‑Clone Detectors and a Hybrid
-    Transformer‑Based Semantic Approach"
   author:
     - family-names: "Nguyen"
       given-names: "Anh Duc"
+    - family-names: "Brunner"
+      given-names: "Tibor"
     - family-names: "Erdei"
       given-names: "Zsófia"
     - family-names: "Alwaháb"
       given-names: "Zoltán"
-    - family-names: "Brunner"
-      given-names: "Tibor"
+  doi: 10.5281/zenodo.17743015 
   journal: "Master Thesis, Eötvös Loránd University"
+  title: "A Comparative Study of Multi‑Language Code‑Clone Detectors and a Hybrid
+    Transformer‑Based Semantic Approach"
   year: 2025
   url: "https://github.com/Ducnguyen147/Code_Duplication_Test"
