@@ -1,17 +1,19 @@
 cff-version: 1.2.0
 message: "If you use this software or dataset, please cite it as below."
+title: "Code_Duplication_Test: evaluation corpus and scripts for multi-language code-clone detection"
+version: 1.0.0
+date-released: "2025-11-27"
 authors:
   - family-names: "Nguyen"
     given-names: "Anh Duc"
-    # orcid: "https://orcid.org/XXXX-XXXX-XXXX-XXXX"
-title: "Code_Duplication_Test: evaluation corpus and scripts for multi‑language code‑clone detection"
-version: 1.0.0
-doi: 10.5281/zenodo.17743015 
-date-released: "2025-11-27"
+identifiers:
+  - type: doi
+    value: "10.5281/zenodo.17743015"
 url: "https://github.com/Ducnguyen147/Code_Duplication_Test"
+repository-code: "https://github.com/Ducnguyen147/Code_Duplication_Test"
 preferred-citation:
   type: article
-  author:
+  authors:
     - family-names: "Nguyen"
       given-names: "Anh Duc"
     - family-names: "Brunner"
@@ -20,9 +22,8 @@ preferred-citation:
       given-names: "Zsófia"
     - family-names: "Alwaháb"
       given-names: "Zoltán"
-  doi: 10.5281/zenodo.17743015 
-  journal: "Master Thesis, Eötvös Loránd University"
-  title: "A Comparative Study of Multi‑Language Code‑Clone Detectors and a Hybrid
-    Transformer‑Based Semantic Approach"
+  title: "A Comparative Study of Multi-Language Code-Clone Detectors and a Hybrid Transformer-Based Semantic Approach"
+  journal: "Master Thesis, Eötvös Loránd University"
   year: 2025
+  doi: "10.5281/zenodo.17743015"
   url: "https://github.com/Ducnguyen147/Code_Duplication_Test"
