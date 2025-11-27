@@ -1,44 +1,15 @@
+# Code Duplication Test
 
-## Dolos
-Link: https://dolos.ugent.be/docs/running.html
-```bash
-curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
-sudo apt-get install -y nodejs
-sudo npm install -g @dodona/dolos
-zip -r duplication1.zip duplication1
-dolos run -f web -l python duplication1.zip
-dolos run -f csv -l python duplication1.zip # Parse to csv
-dolos run -l python duplication1.zip
+This repository accompanies the master thesis *“A Comparative Study of Multi-Language Code-Clone Detectors and a Hybrid Transformer-Based Semantic Approach”*. It provides a **synthetic benchmark suite** of Python, Java, JavaScript and C++ files along with all the scripts used to run the experiments and reproduce the results discussed in the thesis. The goal is to make the experiments **transparent and reproducible** by publishing the dataset, tool wrappers and analysis scripts openly.
 
-```
+## Contents
 
-## JPlag
-1. Download java version 21
-2. Download JPlag `jplag-6.0.0-jar-with-dependencies.jar` from `https://github.com/jplag/jplag/releases`
+The repository is organised as follows:
 
-## PMD-CPD
-1. sudo apt install -y unzip
-2. wget https://github.com/pmd/pmd/releases/download/pmd_releases%2F7.13.0/pmd-dist-7.13.0-bin.zip
-3. unzip pmd-dist-7.13.0-bin.zip
-4. cd pmd-bin-7.13.0
-5. export PATH="$PATH:$(pwd)/bin"
-6. Test version: `pmd --version``
-
-
-## JSCPD
-1. sudo npm install -g jscpd
-2. jscpd --version
-
-## Semantic comparison
-
-<!-- # 1) Clean out conflicting bits
-pip uninstall -y tree_sitter_languages tree-sitter-language-pack tree-sitter
-
-# 2) Install a modern, compatible stack
-pip install "tree-sitter>=0.25,<0.26" "tree-sitter-language-pack>=0.7"
-# (py-tree-sitter 0.25.x docs show Parser(language, ...))  ← verified. :contentReference[oaicite:3]{index=3} -->
-
-
-```bash
-python3 detect_clone_cli_v8.py --dir /home/duc/Desktop/code_duplication/Code_Duplication_Test/python/negatives --extensions .py --min-tokens 5 --mode hybrid --prefilter-topM 50 --mutual-nearest
-```
+| Directory or file | Purpose |
+| --- | --- |
+| `dataset/` | Contains the four-language **artificial “mix” benchmark suite**. Each subdirectory (`python/`, `java/`, `javascript/`, `cpp/`) holds synthetic files used to evaluate clone detectors. |
+| `sweep/` | Parameter-sweep scripts for each detector. These scripts iterate over tool-specific parameters (e.g. Dolos k/w values, thresholds) and write out metrics tables. |
+| `tools_execution/` | Command-line wrappers and helper scripts for running third-party tools (Dolos, JPlag, PMD-CPD, jscpd) and parsing their outputs. They normalise the outputs into a unified CSV format for evaluation. |
+| `tables/` | Generated CSV tables containing precision/recall/F1 scores for different tools, languages and thresholds. These tables underpin the figures and tables in the thesis. |
+| `visualizations/` | Figures and plots used in the Thesis. |
